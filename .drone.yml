@@ -346,6 +346,10 @@ steps:
     template: "Status: **{{ build.status }}**<br/> Build: [{{ repo.Owner }}/{{ repo.Name }}]({{ build.link }}) ({{ build.branch }}) by {{ build.author }}<br/> Message: {{ build.message }}"
     username:
       from_secret: matrix_username
+  when:
+    status:
+    - success
+    - failure
 
 trigger:
   ref:
@@ -362,6 +366,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: a407158975e2210a18ef5771030c5181418ce7aef68fd46e1e64f8bc2097a1d3
+hmac: c8a46e748269c79caf345ebfcb117a5bd78b6e62a40de8ce492a165a0fa7789d
 
 ...
