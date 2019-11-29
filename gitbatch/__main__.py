@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+"""Main program."""
 
 import argparse
 import logging
@@ -35,7 +36,7 @@ def normalize_path(path):
 
 def repos_from_file(src):
     repos = []
-    with open(src, 'r') as f:
+    with open(src, "r") as f:
         for num, line in enumerate(f, start=1):
             repo = {}
             line = line.strip()
