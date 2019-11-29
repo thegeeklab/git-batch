@@ -1,0 +1,363 @@
+---
+kind: pipeline
+name: lint
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: flake8
+  pull: always
+  image: python:3.7
+  commands:
+  - pip install -r test-requirements.txt -qq
+  - pip install -qq .
+  - flake8 ./gitbatch
+  environment:
+    PY_COLORS: 1
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+---
+kind: pipeline
+name: test
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: python35-pytest
+  pull: always
+  image: python:3.5
+  commands:
+  - pip install -r test-requirements.txt -qq
+  - pip install -qq .
+  - git-batch --help
+  environment:
+    PY_COLORS: 1
+  depends_on:
+  - clone
+
+- name: python36-pytest
+  pull: always
+  image: python:3.6
+  commands:
+  - pip install -r test-requirements.txt -qq
+  - pip install -qq .
+  - git-batch --help
+  environment:
+    PY_COLORS: 1
+  depends_on:
+  - clone
+
+- name: python37-pytest
+  pull: always
+  image: python:3.7
+  commands:
+  - pip install -r test-requirements.txt -qq
+  - pip install -qq .
+  - git-batch --help
+  environment:
+    PY_COLORS: 1
+  depends_on:
+  - clone
+
+- name: python38-pytest
+  pull: always
+  image: python:3.8
+  commands:
+  - pip install -r test-requirements.txt -qq
+  - pip install -qq .
+  - git-batch --help
+  environment:
+    PY_COLORS: 1
+  depends_on:
+  - clone
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+depends_on:
+- lint
+
+---
+kind: pipeline
+name: security
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: bandit
+  pull: always
+  image: python:3.7
+  commands:
+  - pip install -r test-requirements.txt -qq
+  - pip install -qq .
+  - bandit -r ./gitbatch -x ./gitbatch/tests
+  environment:
+    PY_COLORS: 1
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+depends_on:
+- test
+
+---
+kind: pipeline
+name: build-container-amd64
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  pull: always
+  image: python:3.7
+  commands:
+  - python setup.py bdist_wheel
+
+- name: dryrun
+  pull: always
+  image: plugins/docker:18-linux-amd64
+  settings:
+    dockerfile: Dockerfile
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: xoxys/git-batch
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/pull/**
+
+- name: publish
+  pull: always
+  image: plugins/docker:18-linux-amd64
+  settings:
+    auto_tag: true
+    auto_tag_suffix: amd64
+    dockerfile: Dockerfile
+    password:
+      from_secret: docker_password
+    repo: xoxys/git-batch
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+depends_on:
+- security
+
+---
+kind: pipeline
+name: build-container-arm64
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+- name: build
+  pull: always
+  image: python:3.7
+  commands:
+  - python setup.py bdist_wheel
+
+- name: dryrun
+  pull: always
+  image: plugins/docker:18-linux-arm64
+  settings:
+    dockerfile: Dockerfile
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: xoxys/git-batch
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/pull/**
+
+- name: publish
+  pull: always
+  image: plugins/docker:18-linux-arm64
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm64
+    dockerfile: Dockerfile
+    password:
+      from_secret: docker_password
+    repo: xoxys/git-batch
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+depends_on:
+- security
+
+---
+kind: pipeline
+name: build-container-arm
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: build
+  pull: always
+  image: python:3.7
+  commands:
+  - python setup.py bdist_wheel
+
+- name: dryrun
+  pull: always
+  image: plugins/docker:18-linux-arm
+  settings:
+    dockerfile: Dockerfile
+    dry_run: true
+    password:
+      from_secret: docker_password
+    repo: xoxys/git-batch
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/pull/**
+
+- name: publish
+  pull: always
+  image: plugins/docker:18-linux-arm
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm
+    dockerfile: Dockerfile
+    password:
+      from_secret: docker_password
+    repo: xoxys/git-batch
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+depends_on:
+- security
+
+---
+kind: pipeline
+name: notifications
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: manifest
+  pull: always
+  image: plugins/manifest
+  settings:
+    auto_tag: true
+    ignore_missing: true
+    password:
+      from_secret: docker_password
+    spec: manifest.tmpl
+    username:
+      from_secret: docker_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+- name: readme
+  pull: always
+  image: sheogorath/readme-to-dockerhub
+  environment:
+    DOCKERHUB_PASSWORD:
+      from_secret: docker_password
+    DOCKERHUB_REPO_NAME: git-batch
+    DOCKERHUB_REPO_PREFIX: xoxys
+    DOCKERHUB_USERNAME:
+      from_secret: docker_username
+    README_PATH: README.md
+    SHORT_DESCRIPTION: git-batch
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+
+- name: microbadger
+  pull: always
+  image: plugins/webhook
+  settings:
+    urls:
+      from_secret: microbadger_url
+
+- name: matrix
+  image: plugins/matrix
+  settings:
+    homeserver:
+      from_secret: matrix_homeserver
+    password:
+      from_secret: matrix_password
+    roomid:
+      from_secret: matrix_roomid
+    template: "Status: **{{ build.status }}**<br/> Build: [{{ repo.Owner }}/{{ repo.Name }}]({{ build.link }}) ({{ build.branch }}) by {{ build.author }}<br/> Message: {{ build.message }}"
+    username:
+      from_secret: matrix_username
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  status:
+  - success
+  - failure
+
+depends_on:
+- build-container-amd64
+- build-container-arm64
+- build-container-arm
+
+...
