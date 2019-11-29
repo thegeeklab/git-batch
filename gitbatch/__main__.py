@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 import logging
+import os
 import sys
+from urllib.parse import urlparse
+
 import git
 
 from gitbatch import __version__
-from urllib.parse import urlparse
 
 logger = logging.getLogger("gitbatch")
 formatter = logging.Formatter("[%(levelname)s] %(message)s")
