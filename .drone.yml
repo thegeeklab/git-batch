@@ -360,4 +360,8 @@ depends_on:
 - build-container-arm64
 - build-container-arm
 
+---
+kind: signature
+hmac: a407158975e2210a18ef5771030c5181418ce7aef68fd46e1e64f8bc2097a1d3
+
 ...
