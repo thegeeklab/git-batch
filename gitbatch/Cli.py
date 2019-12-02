@@ -34,7 +34,7 @@ class GitBatch:
 
     def _config(self):
         config = defaultdict(dict)
-        input_file_raw = os.environ.get("GIT_BATCH_INPUT_FILE", "./batchfile")
+        input_file_raw = os.environ.get("GIT_BATCH_INPUT_FILE", ".batchfile")
         config["input_file"] = normalize_path(input_file_raw)
 
         config["ignore_existing"] = to_bool(os.environ.get("GIT_BATCH_IGNORE_EXISTING_REPO", True))
