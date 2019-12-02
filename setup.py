@@ -58,6 +58,8 @@ setup(
     ],
     install_requires=[
         "gitpython",
+        "colorama",
+        "python-json-logger",
     ],
     entry_points={
         "console_scripts": [

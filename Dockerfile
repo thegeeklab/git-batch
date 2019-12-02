@@ -1,5 +1,5 @@
 FROM python:3.7-alpine
-  
+
 LABEL maintainer="Robert Kaussow <mail@geeklabor.de>" \
     org.label-schema.name="git-batch" \
     org.label-schema.vcs-url="https://github.com/xoxys/git-batch" \
