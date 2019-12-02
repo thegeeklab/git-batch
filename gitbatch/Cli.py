@@ -5,7 +5,6 @@ import argparse
 import logging
 import os
 import sys
-
 from collections import defaultdict
 from urllib.parse import urlparse
 
@@ -13,7 +12,8 @@ import git
 
 from gitbatch import __version__
 from gitbatch.Logging import SingleLog
-from gitbatch.Utils import normalize_path, to_bool
+from gitbatch.Utils import normalize_path
+from gitbatch.Utils import to_bool
 
 
 class GitBatch:

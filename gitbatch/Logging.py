@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 """Global utility methods and classes."""
 
-import os
 import logging
-import gitbatch.Utils
+import os
 import sys
 
-
-from gitbatch.Utils import Singleton, to_bool
 import colorama
 from pythonjsonlogger import jsonlogger
+
+import gitbatch.Utils
+from gitbatch.Utils import Singleton
+from gitbatch.Utils import to_bool
 
 CONSOLE_FORMAT = "{}[%(levelname)s]{} %(message)s"
 JSON_FORMAT = "(asctime) (levelname) (message)"
