@@ -39,6 +39,7 @@ steps:
   - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
+  - git-batch --version
   environment:
     PY_COLORS: 1
   depends_on:
@@ -51,6 +52,7 @@ steps:
   - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
+  - git-batch --version
   environment:
     PY_COLORS: 1
   depends_on:
@@ -63,6 +65,7 @@ steps:
   - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
+  - git-batch --version
   environment:
     PY_COLORS: 1
   depends_on:
@@ -75,6 +78,7 @@ steps:
   - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
+  - git-batch --version
   environment:
     PY_COLORS: 1
   depends_on:
@@ -402,6 +406,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 8c305e3426a482058f2fe5efda2fefe4228583676cce9f70962456be10fbded9
+hmac: 036a13c26fb62c830f919c9154fe647c70173f088cd8e59e0fc8b133b4cd4359
 
 ...

@@ -9,6 +9,7 @@ local PythonVersion(pyversion='3.5') = {
     'pip install -r dev-requirements.txt -qq',
     'pip install -qq .',
     'git-batch --help',
+    'git-batch --version',
   ],
   depends_on: [
     'clone',
