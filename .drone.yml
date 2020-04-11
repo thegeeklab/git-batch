@@ -395,10 +395,13 @@ trigger:
   - failure
 
 depends_on:
-- docs
+- build-package
+- build-container-amd64
+- build-container-arm64
+- build-container-arm
 
 ---
 kind: signature
-hmac: 3e6e5bc16fce1351d01113283724c7642644fa7be4726e77879986a08395080b
+hmac: 8c305e3426a482058f2fe5efda2fefe4228583676cce9f70962456be10fbded9
 
 ...

@@ -251,7 +251,10 @@ local PipelineNotifications = {
     },
   ],
   depends_on: [
-    'docs',
+    'build-package',
+    'build-container-amd64',
+    'build-container-arm64',
+    'build-container-arm',
   ],
   trigger: {
     ref: ['refs/heads/master', 'refs/tags/**'],
