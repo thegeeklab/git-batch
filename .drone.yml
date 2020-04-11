@@ -119,6 +119,62 @@ depends_on:
 
 ---
 kind: pipeline
+name: build-package
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+- name: build
+  image: python:3.8
+  commands:
+  - python setup.py sdist bdist_wheel
+
+- name: checksum
+  image: alpine
+  commands:
+  - cd dist/ && sha256sum * > ../sha256sum.txt
+
+- name: publish-github
+  image: plugins/github-release
+  settings:
+    api_key:
+      from_secret: github_token
+    files:
+    - dist/*
+    - sha256sum.txt
+    note: CHANGELOG.md
+    overwrite: true
+    title: ${DRONE_TAG}
+  when:
+    ref:
+    - refs/tags/**
+
+- name: publish-pypi
+  image: plugins/pypi
+  settings:
+    password:
+      from_secret: pypi_password
+    repository: https://upload.pypi.org/legacy/
+    skip_build: true
+    username:
+      from_secret: pypi_username
+  when:
+    ref:
+    - refs/tags/**
+
+trigger:
+  ref:
+  - refs/heads/master
+  - refs/tags/**
+  - refs/pull/**
+
+depends_on:
+- security
+
+---
+kind: pipeline
 name: build-container-amd64
 
 platform:
@@ -295,7 +351,6 @@ platform:
 
 steps:
 - name: manifest
-  pull: always
   image: plugins/manifest
   settings:
     auto_tag: true
@@ -305,13 +360,8 @@ steps:
     spec: manifest.tmpl
     username:
       from_secret: docker_username
-  when:
-    ref:
-    - refs/heads/master
-    - refs/tags/**
 
 - name: readme
-  pull: always
   image: sheogorath/readme-to-dockerhub
   environment:
     DOCKERHUB_PASSWORD:
@@ -321,18 +371,7 @@ steps:
     DOCKERHUB_USERNAME:
       from_secret: docker_username
     README_PATH: README.md
-    SHORT_DESCRIPTION: git-batch
-  when:
-    ref:
-    - refs/heads/master
-    - refs/tags/**
-
-- name: microbadger
-  pull: always
-  image: plugins/webhook
-  settings:
-    urls:
-      from_secret: microbadger_url
+    SHORT_DESCRIPTION: git-batch - Automate cloning a single branch from a repo list
 
 - name: matrix
   image: plugins/matrix
@@ -346,10 +385,6 @@ steps:
     template: "Status: **{{ build.status }}**<br/> Build: [{{ repo.Owner }}/{{ repo.Name }}]({{ build.link }}) ({{ build.branch }}) by {{ build.author }}<br/> Message: {{ build.message }}"
     username:
       from_secret: matrix_username
-  when:
-    status:
-    - success
-    - failure
 
 trigger:
   ref:
@@ -360,12 +395,10 @@ trigger:
   - failure
 
 depends_on:
-- build-container-amd64
-- build-container-arm64
-- build-container-arm
+- docs
 
 ---
 kind: signature
-hmac: b0b80a9e961c9d56a25b583c0e5404b09039a725be5e635670d7c2ef346add5e
+hmac: 3e6e5bc16fce1351d01113283724c7642644fa7be4726e77879986a08395080b
 
 ...
