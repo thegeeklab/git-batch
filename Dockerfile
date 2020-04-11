@@ -17,7 +17,7 @@ RUN apk --update add --virtual .build-deps build-base libffi-dev libressl-dev &&
     apk del .build-deps && \
     rm -f git_batch-*.whl && \
     rm -rf /var/cache/apk/* && \
-    rm -rf /root/.cache/  && \
+    rm -rf /root/.cache/
 
 USER root
 CMD []
