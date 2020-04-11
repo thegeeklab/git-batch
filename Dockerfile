@@ -13,11 +13,11 @@ ADD dist/git_batch-*.whl /
 RUN apk --update add --virtual .build-deps build-base libffi-dev libressl-dev && \
     apk --update add git && \
     pip install --upgrade --no-cache-dir pip && \
-    pip install --no-cache-dir --find-links=. git-batch && \
+    pip install --no-cache-dir git_batch-*.whl && \
     apk del .build-deps && \
+    rm -f git_batch-*.whl && \
     rm -rf /var/cache/apk/* && \
     rm -rf /root/.cache/  && \
-    rm -f git_batch-*.whl
 
 USER root
 CMD []
