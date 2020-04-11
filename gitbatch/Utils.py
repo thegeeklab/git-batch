@@ -2,7 +2,6 @@
 """Global utility methods and classes."""
 
 import os
-import sys
 from distutils.util import strtobool
 
 
@@ -16,6 +15,8 @@ def to_bool(string):
 
 
 class Singleton(type):
+    """Meta singleton class."""
+
     _instances = {}
 
     def __call__(cls, *args, **kwargs):

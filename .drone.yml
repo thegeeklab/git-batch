@@ -9,9 +9,9 @@ platform:
 steps:
 - name: flake8
   pull: always
-  image: python:3.7
+  image: python:3.8
   commands:
-  - pip install -r test-requirements.txt -qq
+  - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - flake8 ./gitbatch
   environment:
@@ -36,7 +36,7 @@ steps:
   pull: always
   image: python:3.5
   commands:
-  - pip install -r test-requirements.txt -qq
+  - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
   environment:
@@ -48,7 +48,7 @@ steps:
   pull: always
   image: python:3.6
   commands:
-  - pip install -r test-requirements.txt -qq
+  - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
   environment:
@@ -60,7 +60,7 @@ steps:
   pull: always
   image: python:3.7
   commands:
-  - pip install -r test-requirements.txt -qq
+  - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
   environment:
@@ -72,7 +72,7 @@ steps:
   pull: always
   image: python:3.8
   commands:
-  - pip install -r test-requirements.txt -qq
+  - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - git-batch --help
   environment:
@@ -100,9 +100,9 @@ platform:
 steps:
 - name: bandit
   pull: always
-  image: python:3.7
+  image: python:3.8
   commands:
-  - pip install -r test-requirements.txt -qq
+  - pip install -r dev-requirements.txt -qq
   - pip install -qq .
   - bandit -r ./gitbatch -x ./gitbatch/tests
   environment:
@@ -128,7 +128,7 @@ platform:
 steps:
 - name: build
   pull: always
-  image: python:3.7
+  image: python:3.8
   commands:
   - python setup.py bdist_wheel
 
@@ -184,7 +184,7 @@ platform:
 steps:
 - name: build
   pull: always
-  image: python:3.7
+  image: python:3.8
   commands:
   - python setup.py bdist_wheel
 
@@ -240,7 +240,7 @@ platform:
 steps:
 - name: build
   pull: always
-  image: python:3.7
+  image: python:3.8
   commands:
   - python setup.py bdist_wheel
 
@@ -366,6 +366,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: c8a46e748269c79caf345ebfcb117a5bd78b6e62a40de8ce492a165a0fa7789d
+hmac: b0b80a9e961c9d56a25b583c0e5404b09039a725be5e635670d7c2ef346add5e
 
 ...

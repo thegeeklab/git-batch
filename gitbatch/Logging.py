@@ -8,7 +8,6 @@ import sys
 import colorama
 from pythonjsonlogger import jsonlogger
 
-import gitbatch.Utils
 from gitbatch.Utils import Singleton
 from gitbatch.Utils import to_bool
 
@@ -48,7 +47,7 @@ class LogFilter(object):
 class MultilineFormatter(logging.Formatter):
     """Logging Formatter to reset color after newline characters."""
 
-    def format(self, record): # noqa
+    def format(self, record):  # noqa
         record.msg = record.msg.replace("\n", "\n{}... ".format(colorama.Style.RESET_ALL))
         return logging.Formatter.format(self, record)
 
@@ -56,12 +55,14 @@ class MultilineFormatter(logging.Formatter):
 class MultilineJsonFormatter(jsonlogger.JsonFormatter):
     """Logging Formatter to remove newline characters."""
 
-    def format(self, record): # noqa
+    def format(self, record):  # noqa
         record.msg = record.msg.replace("\n", " ")
         return jsonlogger.JsonFormatter.format(self, record)
 
 
 class Log:
+    """Base logging object."""
+
     def __init__(self, level=logging.WARN, name="ansibledoctor", json=False):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
@@ -76,8 +77,11 @@ class Log:
         handler = logging.StreamHandler(sys.stderr)
         handler.setLevel(logging.ERROR)
         handler.addFilter(LogFilter(logging.ERROR))
-        handler.setFormatter(MultilineFormatter(
-            self.error(CONSOLE_FORMAT.format(colorama.Fore.RED, colorama.Style.RESET_ALL))))
+        handler.setFormatter(
+            MultilineFormatter(
+                self.error(CONSOLE_FORMAT.format(colorama.Fore.RED, colorama.Style.RESET_ALL))
+            )
+        )
 
         if json:
             handler.setFormatter(MultilineJsonFormatter(JSON_FORMAT))
@@ -88,8 +92,11 @@ class Log:
         handler = logging.StreamHandler(sys.stdout)
         handler.setLevel(logging.WARN)
         handler.addFilter(LogFilter(logging.WARN))
-        handler.setFormatter(MultilineFormatter(
-            self.warn(CONSOLE_FORMAT.format(colorama.Fore.YELLOW, colorama.Style.RESET_ALL))))
+        handler.setFormatter(
+            MultilineFormatter(
+                self.warn(CONSOLE_FORMAT.format(colorama.Fore.YELLOW, colorama.Style.RESET_ALL))
+            )
+        )
 
         if json:
             handler.setFormatter(MultilineJsonFormatter(JSON_FORMAT))
@@ -100,8 +107,11 @@ class Log:
         handler = logging.StreamHandler(sys.stdout)
         handler.setLevel(logging.INFO)
         handler.addFilter(LogFilter(logging.INFO))
-        handler.setFormatter(MultilineFormatter(
-            self.info(CONSOLE_FORMAT.format(colorama.Fore.CYAN, colorama.Style.RESET_ALL))))
+        handler.setFormatter(
+            MultilineFormatter(
+                self.info(CONSOLE_FORMAT.format(colorama.Fore.CYAN, colorama.Style.RESET_ALL))
+            )
+        )
 
         if json:
             handler.setFormatter(MultilineJsonFormatter(JSON_FORMAT))
@@ -112,8 +122,11 @@ class Log:
         handler = logging.StreamHandler(sys.stderr)
         handler.setLevel(logging.CRITICAL)
         handler.addFilter(LogFilter(logging.CRITICAL))
-        handler.setFormatter(MultilineFormatter(
-            self.critical(CONSOLE_FORMAT.format(colorama.Fore.RED, colorama.Style.RESET_ALL))))
+        handler.setFormatter(
+            MultilineFormatter(
+                self.critical(CONSOLE_FORMAT.format(colorama.Fore.RED, colorama.Style.RESET_ALL))
+            )
+        )
 
         if json:
             handler.setFormatter(MultilineJsonFormatter(JSON_FORMAT))
@@ -124,8 +137,11 @@ class Log:
         handler = logging.StreamHandler(sys.stderr)
         handler.setLevel(logging.DEBUG)
         handler.addFilter(LogFilter(logging.DEBUG))
-        handler.setFormatter(MultilineFormatter(
-            self.critical(CONSOLE_FORMAT.format(colorama.Fore.BLUE, colorama.Style.RESET_ALL))))
+        handler.setFormatter(
+            MultilineFormatter(
+                self.critical(CONSOLE_FORMAT.format(colorama.Fore.BLUE, colorama.Style.RESET_ALL))
+            )
+        )
 
         if json:
             handler.setFormatter(MultilineJsonFormatter(JSON_FORMAT))
@@ -175,4 +191,6 @@ class Log:
 
 
 class SingleLog(Log, metaclass=Singleton):
+    """Singleton logger object."""
+
     pass

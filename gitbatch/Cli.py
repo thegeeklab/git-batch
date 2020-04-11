@@ -2,9 +2,7 @@
 """Main program."""
 
 import argparse
-import logging
 import os
-import sys
 from collections import defaultdict
 from urllib.parse import urlparse
 
@@ -17,6 +15,7 @@ from gitbatch.Utils import to_bool
 
 
 class GitBatch:
+    """Handles git operations."""
 
     def __init__(self):
         self.log = SingleLog()
@@ -27,8 +26,11 @@ class GitBatch:
 
     def _cli_args(self):
         parser = argparse.ArgumentParser(
-            description=("Clone single branch from all repositories listed in a file"))
-        parser.add_argument("--version", action="version", version="%(prog)s {}".format(__version__))
+            description=("Clone single branch from all repositories listed in a file")
+        )
+        parser.add_argument(
+            "--version", action="version", version="%(prog)s {}".format(__version__)
+        )
 
         return parser.parse_args()
 
@@ -52,8 +54,11 @@ class GitBatch:
                     try:
                         url, branch, dest = [x.strip() for x in line.split(";")]
                     except ValueError as e:
-                        self.log.sysexit_with_message("Wrong numer of delimiters in line {line_num}: {exp}".format(
-                            line_num=num, exp=e))
+                        self.log.sysexit_with_message(
+                            "Wrong numer of delimiters in line {line_num}: {exp}".format(
+                                line_num=num, exp=e
+                            )
+                        )
 
                     if url:
                         url_parts = urlparse(url)
@@ -61,21 +66,21 @@ class GitBatch:
                         repo["url"] = url
                         repo["branch"] = branch or "master"
                         repo["name"] = os.path.basename(url_parts.path)
-                        repo["dest"] = normalize_path(dest) or normalize_path("./{}".format(repo["name"]))
+                        repo["dest"] = normalize_path(dest) or normalize_path(
+                            "./{}".format(repo["name"])
+                        )
 
                         repos.append(repo)
                     else:
-                        self.log.sysexit_with_message("Repository Url is not set on line {line_num}".format(
-                            line_num=num))
+                        self.log.sysexit_with_message(
+                            "Repository Url is not set on line {line_num}".format(line_num=num)
+                        )
         return repos
 
     def _repos_clone(self, repos, ignore_existing):
         for repo in repos:
             try:
-                options = [
-                    "--branch={}".format(repo["branch"]),
-                    "--single-branch"
-                ]
+                options = ["--branch={}".format(repo["branch"]), "--single-branch"]
                 git.Repo.clone_from(repo["url"], repo["dest"], multi_options=options)
             except git.exc.GitCommandError as e:
                 passed = False
@@ -98,5 +103,8 @@ class GitBatch:
             repos = self._repos_from_file(self.config["input_file"])
             self._repos_clone(repos, self.config["ignore_existing"])
         else:
-            self.log.sysexit_with_message("The given batch file at '{}' does not exist".format(
-                os.path.relpath(os.path.join("./", self.config["input_file"]))))
+            self.log.sysexit_with_message(
+                "The given batch file at '{}' does not exist".format(
+                    os.path.relpath(os.path.join("./", self.config["input_file"]))
+                )
+            )
