@@ -166,6 +166,7 @@ local PipelineBuildContainer(arch='amd64') = {
       pull: 'always',
       commands: [
         'python setup.py bdist_wheel',
+        'ls -l dist/git_batch-*.whl',
       ],
     },
     {
@@ -302,6 +303,9 @@ local PipelineNotifications = {
         template: 'Status: **{{ build.status }}**<br/> Build: [{{ repo.Owner }}/{{ repo.Name }}]({{ build.link }}) ({{ build.branch }}) by {{ build.author }}<br/> Message: {{ build.message }}',
         username: { from_secret: 'matrix_username' },
         password: { from_secret: 'matrix_password' },
+      },
+      when: {
+        status: ['success', 'failure'],
       },
     },
   ],

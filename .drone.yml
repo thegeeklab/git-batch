@@ -191,6 +191,7 @@ steps:
   image: python:3.8
   commands:
   - python setup.py bdist_wheel
+  - ls -l dist/git_batch-*.whl
 
 - name: dryrun
   pull: always
@@ -267,6 +268,7 @@ steps:
   image: python:3.8
   commands:
   - python setup.py bdist_wheel
+  - ls -l dist/git_batch-*.whl
 
 - name: dryrun
   pull: always
@@ -343,6 +345,7 @@ steps:
   image: python:3.8
   commands:
   - python setup.py bdist_wheel
+  - ls -l dist/git_batch-*.whl
 
 - name: dryrun
   pull: always
@@ -479,6 +482,10 @@ steps:
     template: "Status: **{{ build.status }}**<br/> Build: [{{ repo.Owner }}/{{ repo.Name }}]({{ build.link }}) ({{ build.branch }}) by {{ build.author }}<br/> Message: {{ build.message }}"
     username:
       from_secret: matrix_username
+  when:
+    status:
+    - success
+    - failure
 
 trigger:
   ref:
@@ -496,6 +503,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: b460d6f3e540ccfe73ddca52125517a858429b3de7e7354065cb4130b4238358
+hmac: 6499b23b50c851323da8a438c6a9ea83d30b499c6b0c4eef62fea5150ecad7cb
 
 ...
