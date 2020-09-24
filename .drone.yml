@@ -200,29 +200,49 @@ steps:
     dry_run: true
     password:
       from_secret: docker_password
-    repo: xoxys/git-batch
+    repo: thegeeklab/git-batch
     username:
       from_secret: docker_username
   when:
     ref:
     - refs/pull/**
 
-- name: publish
-  pull: always
+- name: publish-dockerhub
   image: plugins/docker:18-linux-amd64
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
-    dockerfile: Dockerfile
+    dockerfile: docker/Dockerfile
     password:
       from_secret: docker_password
-    repo: xoxys/git-batch
+    repo: thegeeklab/${DRONE_REPO_NAME}
     username:
       from_secret: docker_username
   when:
     ref:
     - refs/heads/master
     - refs/tags/**
+  depends_on:
+  - dryrun
+
+- name: publish-quay
+  image: plugins/docker:18-linux-amd64
+  settings:
+    auto_tag: true
+    auto_tag_suffix: amd64
+    dockerfile: docker/Dockerfile
+    password:
+      from_secret: quay_password
+    registry: quay.io
+    repo: quay.io/thegeeklab/${DRONE_REPO_NAME}
+    username:
+      from_secret: quay_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+  depends_on:
+  - dryrun
 
 trigger:
   ref:
@@ -256,29 +276,49 @@ steps:
     dry_run: true
     password:
       from_secret: docker_password
-    repo: xoxys/git-batch
+    repo: thegeeklab/git-batch
     username:
       from_secret: docker_username
   when:
     ref:
     - refs/pull/**
 
-- name: publish
-  pull: always
+- name: publish-dockerhub
   image: plugins/docker:18-linux-arm64
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
-    dockerfile: Dockerfile
+    dockerfile: docker/Dockerfile
     password:
       from_secret: docker_password
-    repo: xoxys/git-batch
+    repo: thegeeklab/${DRONE_REPO_NAME}
     username:
       from_secret: docker_username
   when:
     ref:
     - refs/heads/master
     - refs/tags/**
+  depends_on:
+  - dryrun
+
+- name: publish-quay
+  image: plugins/docker:18-linux-arm64
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm64
+    dockerfile: docker/Dockerfile
+    password:
+      from_secret: quay_password
+    registry: quay.io
+    repo: quay.io/thegeeklab/${DRONE_REPO_NAME}
+    username:
+      from_secret: quay_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+  depends_on:
+  - dryrun
 
 trigger:
   ref:
@@ -312,29 +352,49 @@ steps:
     dry_run: true
     password:
       from_secret: docker_password
-    repo: xoxys/git-batch
+    repo: thegeeklab/git-batch
     username:
       from_secret: docker_username
   when:
     ref:
     - refs/pull/**
 
-- name: publish
-  pull: always
+- name: publish-dockerhub
   image: plugins/docker:18-linux-arm
   settings:
     auto_tag: true
     auto_tag_suffix: arm
-    dockerfile: Dockerfile
+    dockerfile: docker/Dockerfile
     password:
       from_secret: docker_password
-    repo: xoxys/git-batch
+    repo: thegeeklab/${DRONE_REPO_NAME}
     username:
       from_secret: docker_username
   when:
     ref:
     - refs/heads/master
     - refs/tags/**
+  depends_on:
+  - dryrun
+
+- name: publish-quay
+  image: plugins/docker:18-linux-arm
+  settings:
+    auto_tag: true
+    auto_tag_suffix: arm
+    dockerfile: docker/Dockerfile
+    password:
+      from_secret: quay_password
+    registry: quay.io
+    repo: quay.io/thegeeklab/${DRONE_REPO_NAME}
+    username:
+      from_secret: quay_username
+  when:
+    ref:
+    - refs/heads/master
+    - refs/tags/**
+  depends_on:
+  - dryrun
 
 trigger:
   ref:
@@ -354,28 +414,58 @@ platform:
   arch: amd64
 
 steps:
-- name: manifest
+- name: manifest-dockerhub
   image: plugins/manifest
   settings:
     auto_tag: true
     ignore_missing: true
     password:
       from_secret: docker_password
-    spec: manifest.tmpl
+    spec: docker/manifest.tmpl
     username:
       from_secret: docker_username
+  when:
+    status:
+    - success
 
-- name: readme
-  image: sheogorath/readme-to-dockerhub
+- name: manifest-quay
+  image: plugins/manifest
+  settings:
+    auto_tag: true
+    ignore_missing: true
+    password:
+      from_secret: quay_password
+    spec: docker/manifest-quay.tmpl
+    username:
+      from_secret: quay_username
+  when:
+    status:
+    - success
+
+- name: pushrm-dockerhub
+  image: chko/docker-pushrm:1
   environment:
-    DOCKERHUB_PASSWORD:
+    DOCKER_PASS:
       from_secret: docker_password
-    DOCKERHUB_REPO_NAME: git-batch
-    DOCKERHUB_REPO_PREFIX: xoxys
-    DOCKERHUB_USERNAME:
+    DOCKER_USER:
       from_secret: docker_username
-    README_PATH: README.md
-    SHORT_DESCRIPTION: git-batch - Automate cloning a single branch from a repo list
+    PUSHRM_FILE: README.md
+    PUSHRM_SHORT: GitHub release notification bot
+    PUSHRM_TARGET: thegeeklab/${DRONE_REPO_NAME}
+  when:
+    status:
+    - success
+
+- name: pushrm-quay
+  image: chko/docker-pushrm:1
+  environment:
+    APIKEY__QUAY_IO:
+      from_secret: quay_token
+    PUSHRM_FILE: README.md
+    PUSHRM_TARGET: quay.io/thegeeklab/${DRONE_REPO_NAME}
+  when:
+    status:
+    - success
 
 - name: matrix
   image: plugins/matrix
@@ -406,6 +496,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 036a13c26fb62c830f919c9154fe647c70173f088cd8e59e0fc8b133b4cd4359
+hmac: b460d6f3e540ccfe73ddca52125517a858429b3de7e7354065cb4130b4238358
 
 ...

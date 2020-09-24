@@ -1,1 +1,2 @@
-* initial release
+- INTERNAL
+  - publish to dockerhub and quay.io

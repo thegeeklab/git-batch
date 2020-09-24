@@ -1,8 +1,8 @@
 ---
 repository:
   name: git-batch
-  description: Simple tool to automate cloning a single branch from a list of repositories
-  topics: git, batch, automation, python
+  description: Automate cloning a single branch from a list of repositories
+  topics: git, automation, python
 
   private: false
   has_issues: true

@@ -175,7 +175,7 @@ local PipelineBuildContainer(arch='amd64') = {
       settings: {
         dry_run: true,
         dockerfile: 'Dockerfile',
-        repo: 'xoxys/git-batch',
+        repo: 'thegeeklab/git-batch',
         username: { from_secret: 'docker_username' },
         password: { from_secret: 'docker_password' },
       },
@@ -184,20 +184,37 @@ local PipelineBuildContainer(arch='amd64') = {
       },
     },
     {
-      name: 'publish',
+      name: 'publish-dockerhub',
       image: 'plugins/docker:18-linux-' + arch,
-      pull: 'always',
       settings: {
         auto_tag: true,
         auto_tag_suffix: arch,
-        dockerfile: 'Dockerfile',
-        repo: 'xoxys/git-batch',
+        dockerfile: 'docker/Dockerfile',
+        repo: 'thegeeklab/${DRONE_REPO_NAME}',
         username: { from_secret: 'docker_username' },
         password: { from_secret: 'docker_password' },
       },
       when: {
         ref: ['refs/heads/master', 'refs/tags/**'],
       },
+      depends_on: ['dryrun'],
+    },
+    {
+      name: 'publish-quay',
+      image: 'plugins/docker:18-linux-' + arch,
+      settings: {
+        auto_tag: true,
+        auto_tag_suffix: arch,
+        dockerfile: 'docker/Dockerfile',
+        registry: 'quay.io',
+        repo: 'quay.io/thegeeklab/${DRONE_REPO_NAME}',
+        username: { from_secret: 'quay_username' },
+        password: { from_secret: 'quay_password' },
+      },
+      when: {
+        ref: ['refs/heads/master', 'refs/tags/**'],
+      },
+      depends_on: ['dryrun'],
     },
   ],
   depends_on: [
@@ -218,25 +235,62 @@ local PipelineNotifications = {
   steps: [
     {
       image: 'plugins/manifest',
-      name: 'manifest',
+      name: 'manifest-dockerhub',
       settings: {
         ignore_missing: true,
         auto_tag: true,
         username: { from_secret: 'docker_username' },
         password: { from_secret: 'docker_password' },
-        spec: 'manifest.tmpl',
+        spec: 'docker/manifest.tmpl',
+      },
+      when: {
+        status: ['success'],
       },
     },
     {
-      name: 'readme',
-      image: 'sheogorath/readme-to-dockerhub',
+      image: 'plugins/manifest',
+      name: 'manifest-quay',
+      settings: {
+        ignore_missing: true,
+        auto_tag: true,
+        username: { from_secret: 'quay_username' },
+        password: { from_secret: 'quay_password' },
+        spec: 'docker/manifest-quay.tmpl',
+      },
+      when: {
+        status: ['success'],
+      },
+    },
+    {
+      name: 'pushrm-dockerhub',
+      image: 'chko/docker-pushrm:1',
       environment: {
-        DOCKERHUB_USERNAME: { from_secret: 'docker_username' },
-        DOCKERHUB_PASSWORD: { from_secret: 'docker_password' },
-        DOCKERHUB_REPO_PREFIX: 'xoxys',
-        DOCKERHUB_REPO_NAME: 'git-batch',
-        README_PATH: 'README.md',
-        SHORT_DESCRIPTION: 'git-batch - Automate cloning a single branch from a repo list',
+        DOCKER_PASS: {
+          from_secret: 'docker_password',
+        },
+        DOCKER_USER: {
+          from_secret: 'docker_username',
+        },
+        PUSHRM_FILE: 'README.md',
+        PUSHRM_SHORT: 'GitHub release notification bot',
+        PUSHRM_TARGET: 'thegeeklab/${DRONE_REPO_NAME}',
+      },
+      when: {
+        status: ['success'],
+      },
+    },
+    {
+      name: 'pushrm-quay',
+      image: 'chko/docker-pushrm:1',
+      environment: {
+        APIKEY__QUAY_IO: {
+          from_secret: 'quay_token',
+        },
+        PUSHRM_FILE: 'README.md',
+        PUSHRM_TARGET: 'quay.io/thegeeklab/${DRONE_REPO_NAME}',
+      },
+      when: {
+        status: ['success'],
       },
     },
     {
