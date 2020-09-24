@@ -166,7 +166,6 @@ local PipelineBuildContainer(arch='amd64') = {
       pull: 'always',
       commands: [
         'python setup.py bdist_wheel',
-        'ls -l dist/git_batch-*.whl',
       ],
     },
     {
@@ -183,6 +182,7 @@ local PipelineBuildContainer(arch='amd64') = {
       when: {
         ref: ['refs/pull/**'],
       },
+      depends_on: ['build'],
     },
     {
       name: 'publish-dockerhub',

@@ -191,7 +191,6 @@ steps:
   image: python:3.8
   commands:
   - python setup.py bdist_wheel
-  - ls -l dist/git_batch-*.whl
 
 - name: dryrun
   pull: always
@@ -207,6 +206,8 @@ steps:
   when:
     ref:
     - refs/pull/**
+  depends_on:
+  - build
 
 - name: publish-dockerhub
   image: plugins/docker:18-linux-amd64
@@ -268,7 +269,6 @@ steps:
   image: python:3.8
   commands:
   - python setup.py bdist_wheel
-  - ls -l dist/git_batch-*.whl
 
 - name: dryrun
   pull: always
@@ -284,6 +284,8 @@ steps:
   when:
     ref:
     - refs/pull/**
+  depends_on:
+  - build
 
 - name: publish-dockerhub
   image: plugins/docker:18-linux-arm64
@@ -345,7 +347,6 @@ steps:
   image: python:3.8
   commands:
   - python setup.py bdist_wheel
-  - ls -l dist/git_batch-*.whl
 
 - name: dryrun
   pull: always
@@ -361,6 +362,8 @@ steps:
   when:
     ref:
     - refs/pull/**
+  depends_on:
+  - build
 
 - name: publish-dockerhub
   image: plugins/docker:18-linux-arm
@@ -503,6 +506,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 6499b23b50c851323da8a438c6a9ea83d30b499c6b0c4eef62fea5150ecad7cb
+hmac: b0626fcfd280db07a1a02ffa1cf800dcab7ee76d419a54e68c679ffbcfefdaf6
 
 ...
