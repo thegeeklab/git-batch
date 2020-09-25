@@ -10,7 +10,7 @@ Automate cloning a single branch from a list of repositories
 [![PyPi Release](https://img.shields.io/pypi/v/git-batch.svg)](https://pypi.org/project/git-batch/)
 [![GitHub contributors](https://img.shields.io/github/contributors/thegeeklab/git-batch)](https://github.com/thegeeklab/git-batch/graphs/contributors)
 [![Source: GitHub](https://img.shields.io/badge/source-github-blue.svg?logo=github&logoColor=white)](https://github.com/thegeeklab/git-batch)
-[![License: MIT](https://img.shields.io/github/license/thegeeklab/git-batch)](<[LICENSE](https://github.com/thegeeklab/git-batch/blob/master/LICENSE)>)
+[![License: MIT](https://img.shields.io/github/license/thegeeklab/git-batch)](https://github.com/thegeeklab/git-batch/blob/master/LICENSE)
 
 Simple tool to automate cloning a single branch from a list of repositories.
 
