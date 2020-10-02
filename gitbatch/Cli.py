@@ -31,11 +31,27 @@ class GitBatch:
         parser.add_argument(
             "--version", action="version", version="%(prog)s {}".format(__version__)
         )
+        parser.add_argument(
+            "-v", dest="logging.level", action="append_const", const=-1, help="increase log level"
+        )
+        parser.add_argument(
+            "-q", dest="logging.level", action="append_const", const=1, help="decrease log level"
+        )
 
         return parser.parse_args()
 
     def _config(self):
         config = defaultdict(dict)
+
+        # Override correct log level from argparse
+        levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
+        log_level = levels.index("ERROR")
+        tmp_dict = self.args.__dict__
+        if tmp_dict.get("logging.level"):
+            for adjustment in tmp_dict["logging.level"]:
+                log_level = min(len(levels) - 1, max(log_level + adjustment, 0))
+        config["logging"]["level"] = levels[log_level]
+
         input_file_raw = os.environ.get("GIT_BATCH_INPUT_FILE", ".batchfile")
         config["input_file"] = normalize_path(input_file_raw)
 
@@ -66,6 +82,7 @@ class GitBatch:
                         repo["url"] = url
                         repo["branch"] = branch or "master"
                         repo["name"] = os.path.basename(url_parts.path)
+                        repo["rel_dest"] = dest
                         repo["dest"] = normalize_path(dest) or normalize_path(
                             "./{}".format(repo["name"])
                         )
@@ -85,10 +102,14 @@ class GitBatch:
             except git.exc.GitCommandError as e:
                 passed = False
                 err_raw = e.stderr.strip().splitlines()[:-1]
-                err = [x.split(":", 1)[1].strip() for x in err_raw]
+                err = [
+                    x.split(":", 1)[1].strip().replace(repo["dest"], repo["rel_dest"])
+                    for x in err_raw
+                ]
 
                 if any(["already exists and is not an empty directory" in item for item in err]):
                     if self.config["ignore_existing"]:
+                        self.logger.warn("Git error: {}".format("\n".join(err)))
                         passed = True
 
                 if any(["Could not find remote branch" in item for item in err]):
@@ -96,9 +117,10 @@ class GitBatch:
                         passed = True
 
                 if not passed:
-                    self.log.sysexit_with_message("Git error: " + "\n".join(err))
+                    self.log.sysexit_with_message("Git error: {}".format("\n".join(err)))
 
     def run(self):
+        self.log.set_level(self.config["logging"]["level"])
         if os.path.isfile(self.config["input_file"]):
             repos = self._repos_from_file(self.config["input_file"])
             self._repos_clone(repos, self.config["ignore_existing"])
