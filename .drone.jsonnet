@@ -174,7 +174,7 @@ local PipelineBuildContainer(arch='amd64') = {
       pull: 'always',
       settings: {
         dry_run: true,
-        dockerfile: 'Dockerfile',
+        dockerfile: 'docker/Dockerfile',
         repo: 'thegeeklab/git-batch',
         username: { from_secret: 'docker_username' },
         password: { from_secret: 'docker_password' },

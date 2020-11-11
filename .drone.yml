@@ -196,7 +196,7 @@ steps:
   pull: always
   image: plugins/docker:18-linux-amd64
   settings:
-    dockerfile: Dockerfile
+    dockerfile: docker/Dockerfile
     dry_run: true
     password:
       from_secret: docker_password
@@ -274,7 +274,7 @@ steps:
   pull: always
   image: plugins/docker:18-linux-arm64
   settings:
-    dockerfile: Dockerfile
+    dockerfile: docker/Dockerfile
     dry_run: true
     password:
       from_secret: docker_password
@@ -352,7 +352,7 @@ steps:
   pull: always
   image: plugins/docker:18-linux-arm
   settings:
-    dockerfile: Dockerfile
+    dockerfile: docker/Dockerfile
     dry_run: true
     password:
       from_secret: docker_password
@@ -506,6 +506,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: b0626fcfd280db07a1a02ffa1cf800dcab7ee76d419a54e68c679ffbcfefdaf6
+hmac: 2d40f7967d55df1f5e96b625062998a20f33a32d95f71912b17944f3525e77c6
 
 ...
