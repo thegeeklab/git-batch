@@ -17,6 +17,9 @@ steps:
   environment:
     PY_COLORS: 1
 
+image_pull_secrets:
+- docker_config
+
 trigger:
   ref:
   - refs/heads/master
@@ -97,6 +100,9 @@ steps:
   depends_on:
   - clone
 
+image_pull_secrets:
+- docker_config
+
 trigger:
   ref:
   - refs/heads/master
@@ -124,6 +130,9 @@ steps:
   - bandit -r ./gitbatch -x ./gitbatch/tests
   environment:
     PY_COLORS: 1
+
+image_pull_secrets:
+- docker_config
 
 trigger:
   ref:
@@ -181,6 +190,9 @@ steps:
     ref:
     - refs/tags/**
 
+image_pull_secrets:
+- docker_config
+
 trigger:
   ref:
   - refs/heads/master
@@ -207,7 +219,7 @@ steps:
 
 - name: dryrun
   pull: always
-  image: plugins/docker:18-linux-amd64
+  image: plugins/docker:19
   settings:
     dockerfile: docker/Dockerfile
     dry_run: true
@@ -223,10 +235,12 @@ steps:
   - build
 
 - name: publish-dockerhub
-  image: plugins/docker:18-linux-amd64
+  image: plugins/docker:19
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     password:
       from_secret: docker_password
@@ -241,10 +255,12 @@ steps:
   - dryrun
 
 - name: publish-quay
-  image: plugins/docker:18-linux-amd64
+  image: plugins/docker:19
   settings:
     auto_tag: true
     auto_tag_suffix: amd64
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     password:
       from_secret: quay_password
@@ -258,6 +274,9 @@ steps:
     - refs/tags/**
   depends_on:
   - dryrun
+
+image_pull_secrets:
+- docker_config
 
 trigger:
   ref:
@@ -285,7 +304,7 @@ steps:
 
 - name: dryrun
   pull: always
-  image: plugins/docker:18-linux-arm64
+  image: plugins/docker:19
   settings:
     dockerfile: docker/Dockerfile
     dry_run: true
@@ -301,10 +320,12 @@ steps:
   - build
 
 - name: publish-dockerhub
-  image: plugins/docker:18-linux-arm64
+  image: plugins/docker:19
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     password:
       from_secret: docker_password
@@ -319,10 +340,12 @@ steps:
   - dryrun
 
 - name: publish-quay
-  image: plugins/docker:18-linux-arm64
+  image: plugins/docker:19
   settings:
     auto_tag: true
     auto_tag_suffix: arm64
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     password:
       from_secret: quay_password
@@ -336,6 +359,9 @@ steps:
     - refs/tags/**
   depends_on:
   - dryrun
+
+image_pull_secrets:
+- docker_config
 
 trigger:
   ref:
@@ -363,7 +389,7 @@ steps:
 
 - name: dryrun
   pull: always
-  image: plugins/docker:18-linux-arm
+  image: plugins/docker:19
   settings:
     dockerfile: docker/Dockerfile
     dry_run: true
@@ -379,10 +405,12 @@ steps:
   - build
 
 - name: publish-dockerhub
-  image: plugins/docker:18-linux-arm
+  image: plugins/docker:19
   settings:
     auto_tag: true
     auto_tag_suffix: arm
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     password:
       from_secret: docker_password
@@ -397,10 +425,12 @@ steps:
   - dryrun
 
 - name: publish-quay
-  image: plugins/docker:18-linux-arm
+  image: plugins/docker:19
   settings:
     auto_tag: true
     auto_tag_suffix: arm
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     password:
       from_secret: quay_password
@@ -414,6 +444,9 @@ steps:
     - refs/tags/**
   depends_on:
   - dryrun
+
+image_pull_secrets:
+- docker_config
 
 trigger:
   ref:
@@ -503,6 +536,9 @@ steps:
     - success
     - failure
 
+image_pull_secrets:
+- docker_config
+
 trigger:
   ref:
   - refs/heads/master
@@ -519,6 +555,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: df44919980e20290304c17643e6b0f68a89a55e78c47d2bc401e697b59e2ce0d
+hmac: 40231bb97e628b0d1b3bc75425ce214b28c0c5bcba2b72c0d49c18e2a0d222a5
 
 ...
