@@ -16,7 +16,8 @@ Simple tool to automate cloning a single branch from a list of repositories.
 
 ## Contributors
 
-Special thanks goes to all [contributors](https://github.com/thegeeklab/git-batch/graphs/contributors).
+Special thanks goes to all [contributors](https://github.com/thegeeklab/git-batch/graphs/contributors). If you would like to contribute,
+please see the [instructions](https://github.com/thegeeklab/git-batch/blob/master/CONTRIBUTING.md).
 
 ## License
 
