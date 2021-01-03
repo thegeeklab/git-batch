@@ -1,4 +1,19 @@
-- ENHANCEMENT
-  - add log levels:
-    Log levels can be set by cli flags `-vvv` or `-qqq`. The default log level is `ERROR`.
-  - add warning if repos were skipped in case of not empty destination directories
+# Changelog
+
+## v0.4.0 (2021-01-03)
+
+### Docs
+
+- add contributing information
+
+### Others
+
+- migrate to poetry
+- replace master by main as default branch
+- **docker**: use standalone dockerfiles for multiarch
+- **docker**: switch to org.opencontainers image labels
+- use renovate preset config
+
+### Breaking Changes
+
+- drop Python 3.5 support
