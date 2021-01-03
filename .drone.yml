@@ -46,6 +46,11 @@ platform:
   arch: amd64
 
 steps:
+- name: fetch
+  image: python:3.9
+  commands:
+  - git fetch -tq
+
 - name: python36-pytest
   pull: always
   image: python:3.6
@@ -564,6 +569,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: b3bf836d975ef4fae61e066eb2c1879bfc8fcf48124eb14f69fdf578673f8aad
+hmac: 8c78f053eaee2e5ac731c7c1c5849d7cc1209603468c096a639c1f7f3cd4a555
 
 ...

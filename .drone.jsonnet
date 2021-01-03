@@ -67,6 +67,13 @@ local PipelineTest = {
     arch: 'amd64',
   },
   steps: [
+    {
+      name: 'fetch',
+      image: 'python:3.9',
+      commands: [
+        'git fetch -tq',
+      ],
+    },
     PythonVersion(pyversion='3.6'),
     PythonVersion(pyversion='3.7'),
     PythonVersion(pyversion='3.8'),
