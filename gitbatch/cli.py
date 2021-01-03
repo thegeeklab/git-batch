@@ -9,9 +9,9 @@ from urllib.parse import urlparse
 import git
 
 from gitbatch import __version__
-from gitbatch.Logging import SingleLog
-from gitbatch.Utils import normalize_path
-from gitbatch.Utils import to_bool
+from gitbatch.logging import SingleLog
+from gitbatch.utils import normalize_path
+from gitbatch.utils import to_bool
 
 
 class GitBatch:
@@ -130,3 +130,7 @@ class GitBatch:
                     os.path.relpath(os.path.join("./", self.config["input_file"]))
                 )
             )
+
+
+def main():
+    GitBatch()

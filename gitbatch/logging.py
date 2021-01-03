@@ -8,8 +8,8 @@ import sys
 import colorama
 from pythonjsonlogger import jsonlogger
 
-from gitbatch.Utils import Singleton
-from gitbatch.Utils import to_bool
+from gitbatch.utils import Singleton
+from gitbatch.utils import to_bool
 
 CONSOLE_FORMAT = "{}[%(levelname)s]{} %(message)s"
 JSON_FORMAT = "(asctime) (levelname) (message)"

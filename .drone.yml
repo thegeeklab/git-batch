@@ -7,13 +7,24 @@ platform:
   arch: amd64
 
 steps:
+- name: yapf
+  image: python:3.9
+  commands:
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry run yapf -dr ./gitbatch
+  environment:
+    PY_COLORS: 1
+
 - name: flake8
   pull: always
   image: python:3.9
   commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - flake8 ./gitbatch
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry run flake8 ./gitbatch
   environment:
     PY_COLORS: 1
 
@@ -35,70 +46,57 @@ platform:
   arch: amd64
 
 steps:
-- name: python35-pytest
-  pull: always
-  image: python:3.5
-  commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - git-batch --help
-  - git-batch --version
-  environment:
-    PY_COLORS: 1
-  depends_on:
-  - clone
-
 - name: python36-pytest
   pull: always
   image: python:3.6
   commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - git-batch --help
-  - git-batch --version
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry version
+  - poetry run git-batch --help
   environment:
     PY_COLORS: 1
   depends_on:
-  - clone
+  - fetch
 
 - name: python37-pytest
   pull: always
   image: python:3.7
   commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - git-batch --help
-  - git-batch --version
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry version
+  - poetry run git-batch --help
   environment:
     PY_COLORS: 1
   depends_on:
-  - clone
+  - fetch
 
 - name: python38-pytest
   pull: always
   image: python:3.8
   commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - git-batch --help
-  - git-batch --version
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry version
+  - poetry run git-batch --help
   environment:
     PY_COLORS: 1
   depends_on:
-  - clone
+  - fetch
 
 - name: python39-pytest
   pull: always
   image: python:3.9
   commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - git-batch --help
-  - git-batch --version
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry version
+  - poetry run git-batch --help
   environment:
     PY_COLORS: 1
   depends_on:
-  - clone
+  - fetch
 
 image_pull_secrets:
 - docker_config
@@ -125,9 +123,10 @@ steps:
   pull: always
   image: python:3.9
   commands:
-  - pip install -r dev-requirements.txt -qq
-  - pip install -qq .
-  - bandit -r ./gitbatch -x ./gitbatch/tests
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry install -q
+  - poetry run bandit -r ./gitbatch -x ./gitbatch/test
   environment:
     PY_COLORS: 1
 
@@ -155,7 +154,9 @@ steps:
 - name: build
   image: python:3.9
   commands:
-  - python setup.py sdist bdist_wheel
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry build
 
 - name: checksum
   image: alpine
@@ -178,13 +179,15 @@ steps:
     - refs/tags/**
 
 - name: publish-pypi
-  image: plugins/pypi
-  settings:
-    password:
+  image: python:3.9
+  commands:
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry publish -n
+  environment:
+    POETRY_HTTP_BASIC_PYPI_PASSWORD:
       from_secret: pypi_password
-    repository: https://upload.pypi.org/legacy/
-    skip_build: true
-    username:
+    POETRY_HTTP_BASIC_PYPI_USERNAME:
       from_secret: pypi_username
   when:
     ref:
@@ -215,7 +218,9 @@ steps:
   pull: always
   image: python:3.9
   commands:
-  - python setup.py bdist_wheel
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry build
 
 - name: dryrun
   pull: always
@@ -300,7 +305,9 @@ steps:
   pull: always
   image: python:3.9
   commands:
-  - python setup.py bdist_wheel
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry build
 
 - name: dryrun
   pull: always
@@ -385,7 +392,9 @@ steps:
   pull: always
   image: python:3.9
   commands:
-  - python setup.py bdist_wheel
+  - git fetch -tq
+  - pip install poetry poetry-dynamic-versioning -qq
+  - poetry build
 
 - name: dryrun
   pull: always
@@ -555,6 +564,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 40231bb97e628b0d1b3bc75425ce214b28c0c5bcba2b72c0d49c18e2a0d222a5
+hmac: b3bf836d975ef4fae61e066eb2c1879bfc8fcf48124eb14f69fdf578673f8aad
 
 ...
