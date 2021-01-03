@@ -207,6 +207,7 @@ local PipelineBuildContainer(arch='amd64') = {
       image: 'plugins/docker:19',
       pull: 'always',
       settings: {
+        config: { from_secret: 'docker_config' },
         dry_run: true,
         dockerfile: 'docker/Dockerfile',
         repo: 'thegeeklab/git-batch',

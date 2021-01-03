@@ -231,6 +231,8 @@ steps:
   pull: always
   image: plugins/docker:19
   settings:
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     dry_run: true
     password:
@@ -318,6 +320,8 @@ steps:
   pull: always
   image: plugins/docker:19
   settings:
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     dry_run: true
     password:
@@ -405,6 +409,8 @@ steps:
   pull: always
   image: plugins/docker:19
   settings:
+    config:
+      from_secret: docker_config
     dockerfile: docker/Dockerfile
     dry_run: true
     password:
@@ -569,6 +575,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 8c78f053eaee2e5ac731c7c1c5849d7cc1209603468c096a639c1f7f3cd4a555
+hmac: 4e584a0541cf28a67c24b61a955fcfeacd37a768a8f99f280b1dc572501fe5d3
 
 ...
