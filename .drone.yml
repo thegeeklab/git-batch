@@ -33,7 +33,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -108,7 +108,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -140,7 +140,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -203,7 +203,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -261,7 +261,7 @@ steps:
       from_secret: docker_username
   when:
     ref:
-    - refs/heads/master
+    - refs/heads/main
     - refs/tags/**
   depends_on:
   - dryrun
@@ -282,7 +282,7 @@ steps:
       from_secret: quay_username
   when:
     ref:
-    - refs/heads/master
+    - refs/heads/main
     - refs/tags/**
   depends_on:
   - dryrun
@@ -292,7 +292,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -350,7 +350,7 @@ steps:
       from_secret: docker_username
   when:
     ref:
-    - refs/heads/master
+    - refs/heads/main
     - refs/tags/**
   depends_on:
   - dryrun
@@ -371,7 +371,7 @@ steps:
       from_secret: quay_username
   when:
     ref:
-    - refs/heads/master
+    - refs/heads/main
     - refs/tags/**
   depends_on:
   - dryrun
@@ -381,7 +381,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -439,7 +439,7 @@ steps:
       from_secret: docker_username
   when:
     ref:
-    - refs/heads/master
+    - refs/heads/main
     - refs/tags/**
   depends_on:
   - dryrun
@@ -460,7 +460,7 @@ steps:
       from_secret: quay_username
   when:
     ref:
-    - refs/heads/master
+    - refs/heads/main
     - refs/tags/**
   depends_on:
   - dryrun
@@ -470,7 +470,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   - refs/pull/**
 
@@ -561,7 +561,7 @@ image_pull_secrets:
 
 trigger:
   ref:
-  - refs/heads/master
+  - refs/heads/main
   - refs/tags/**
   status:
   - success
@@ -575,6 +575,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 595b9f73481481804eb918efee5275483a9b3d147e0d3ac6b70e49a844f11c90
+hmac: 80a91282f1eac587143c1df4b82e63893fa8beb90f64867b13edf24b54072c4d
 
 ...
