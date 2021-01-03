@@ -10,6 +10,7 @@
 
 - migrate to poetry
 - replace master by main as default branch
+* **deps**: pin docker digests ([#6](https://github.com/thegeeklab/git-batch/issues/6))
 - **docker**: use standalone dockerfiles for multiarch
 - **docker**: switch to org.opencontainers image labels
 - use renovate preset config
