@@ -2,7 +2,7 @@
 
 Automate cloning a single branch from a list of repositories
 
-[![Build Status](https://img.shields.io/drone/build/thegeeklab/git-batch?logo=drone)](https://cloud.drone.io/thegeeklab/git-batch)
+[![Build Status](https://img.shields.io/drone/build/thegeeklab/git-batch?logo=drone)](https://drone.thegeeklab.de/thegeeklab/git-batch)
 [![Docker Hub](https://img.shields.io/badge/dockerhub-latest-blue.svg?logo=docker&logoColor=white)](https://hub.docker.com/r/thegeeklab/git-batch)
 [![Quay.io](https://img.shields.io/badge/quay-latest-blue.svg?logo=docker&logoColor=white)](https://quay.io/repository/thegeeklab/git-batch)
 [![Python Version](https://img.shields.io/pypi/pyversions/git-batch.svg)](https://pypi.org/project/git-batch/)
