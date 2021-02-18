@@ -1,7 +1,6 @@
 local PythonVersion(pyversion='3.6') = {
   name: 'python' + std.strReplace(pyversion, '.', '') + '-pytest',
   image: 'python:' + pyversion,
-  pull: 'always',
   environment: {
     PY_COLORS: 1,
   },
@@ -40,7 +39,6 @@ local PipelineLint = {
     {
       name: 'flake8',
       image: 'python:3.9',
-      pull: 'always',
       environment: {
         PY_COLORS: 1,
       },
@@ -77,12 +75,12 @@ local PipelineTest = {
     PythonVersion(pyversion='3.8'),
     PythonVersion(pyversion='3.9'),
   ],
-  trigger: {
-    ref: ['refs/heads/main', 'refs/tags/**', 'refs/pull/**'],
-  },
   depends_on: [
     'lint',
   ],
+  trigger: {
+    ref: ['refs/heads/main', 'refs/tags/**', 'refs/pull/**'],
+  },
 };
 
 local PipelineSecurity = {
@@ -96,7 +94,6 @@ local PipelineSecurity = {
     {
       name: 'bandit',
       image: 'python:3.9',
-      pull: 'always',
       environment: {
         PY_COLORS: 1,
       },
@@ -189,10 +186,11 @@ local PipelineBuildContainer(arch='amd64') = {
   steps: [
     {
       name: 'build',
-      image: 'python:3.9',
-      pull: 'always',
+      image: 'python:3.9-alpine',
       commands: [
+        'apk --update --quiet add build-base libffi-dev musl-dev libressl-dev python3-dev cargo git',
         'git fetch -tq',
+        'pip install --upgrade --no-cache-dir pip',
         'pip install poetry poetry-dynamic-versioning -qq',
         'poetry build',
       ],
@@ -200,18 +198,17 @@ local PipelineBuildContainer(arch='amd64') = {
     {
       name: 'dryrun',
       image: 'thegeeklab/drone-docker:19',
-      pull: 'always',
       settings: {
         dry_run: true,
         dockerfile: 'docker/Dockerfile.' + arch,
-        repo: 'thegeeklab/git-batch',
+        repo: 'thegeeklab/${DRONE_REPO_NAME}',
         username: { from_secret: 'docker_username' },
         password: { from_secret: 'docker_password' },
       },
+      depends_on: ['build'],
       when: {
         ref: ['refs/pull/**'],
       },
-      depends_on: ['build'],
     },
     {
       name: 'publish-dockerhub',
@@ -293,6 +290,7 @@ local PipelineNotifications = {
     },
     {
       name: 'pushrm-dockerhub',
+      pull: 'always',
       image: 'chko/docker-pushrm:1',
       environment: {
         DOCKER_PASS: {
@@ -311,6 +309,7 @@ local PipelineNotifications = {
     },
     {
       name: 'pushrm-quay',
+      pull: 'always',
       image: 'chko/docker-pushrm:1',
       environment: {
         APIKEY__QUAY_IO: {
