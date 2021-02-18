@@ -12,7 +12,7 @@ steps:
   commands:
   - git fetch -tq
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry run yapf -dr ./gitbatch
   environment:
     PY_COLORS: 1
@@ -22,7 +22,7 @@ steps:
   commands:
   - git fetch -tq
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry run flake8 ./gitbatch
   environment:
     PY_COLORS: 1
@@ -51,7 +51,7 @@ steps:
   image: python:3.6
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry version
   - poetry run git-batch --help
   environment:
@@ -63,7 +63,7 @@ steps:
   image: python:3.7
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry version
   - poetry run git-batch --help
   environment:
@@ -75,7 +75,7 @@ steps:
   image: python:3.8
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry version
   - poetry run git-batch --help
   environment:
@@ -87,7 +87,7 @@ steps:
   image: python:3.9
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry version
   - poetry run git-batch --help
   environment:
@@ -118,7 +118,7 @@ steps:
   commands:
   - git fetch -tq
   - pip install poetry poetry-dynamic-versioning -qq
-  - poetry install -q
+  - poetry install
   - poetry run bandit -r ./gitbatch -x ./gitbatch/test
   environment:
     PY_COLORS: 1
@@ -529,6 +529,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 3aab823250dbdf8f5078e4239f40bfa472c425f8bf61ffef87650cfcf88629c2
+hmac: ba5d8a0fd0f6223e221c2d6f0f0af662b1c4dacf850bfb054fef4b3f83455906
 
 ...

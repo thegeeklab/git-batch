@@ -6,7 +6,7 @@ local PythonVersion(pyversion='3.6') = {
   },
   commands: [
     'pip install poetry poetry-dynamic-versioning -qq',
-    'poetry install -q',
+    'poetry install',
     'poetry version',
     'poetry run git-batch --help',
   ],
@@ -32,7 +32,7 @@ local PipelineLint = {
       commands: [
         'git fetch -tq',
         'pip install poetry poetry-dynamic-versioning -qq',
-        'poetry install -q',
+        'poetry install',
         'poetry run yapf -dr ./gitbatch',
       ],
     },
@@ -45,7 +45,7 @@ local PipelineLint = {
       commands: [
         'git fetch -tq',
         'pip install poetry poetry-dynamic-versioning -qq',
-        'poetry install -q',
+        'poetry install',
         'poetry run flake8 ./gitbatch',
       ],
     },
@@ -100,7 +100,7 @@ local PipelineSecurity = {
       commands: [
         'git fetch -tq',
         'pip install poetry poetry-dynamic-versioning -qq',
-        'poetry install -q',
+        'poetry install',
         'poetry run bandit -r ./gitbatch -x ./gitbatch/test',
       ],
     },
