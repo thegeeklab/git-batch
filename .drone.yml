@@ -18,7 +18,6 @@ steps:
     PY_COLORS: 1
 
 - name: flake8
-  pull: always
   image: python:3.9
   commands:
   - git fetch -tq
@@ -49,7 +48,6 @@ steps:
   - git fetch -tq
 
 - name: python36-pytest
-  pull: always
   image: python:3.6
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
@@ -62,7 +60,6 @@ steps:
   - fetch
 
 - name: python37-pytest
-  pull: always
   image: python:3.7
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
@@ -75,7 +72,6 @@ steps:
   - fetch
 
 - name: python38-pytest
-  pull: always
   image: python:3.8
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
@@ -88,7 +84,6 @@ steps:
   - fetch
 
 - name: python39-pytest
-  pull: always
   image: python:3.9
   commands:
   - pip install poetry poetry-dynamic-versioning -qq
@@ -119,7 +114,6 @@ platform:
 
 steps:
 - name: bandit
-  pull: always
   image: python:3.9
   commands:
   - git fetch -tq
@@ -208,22 +202,22 @@ platform:
 
 steps:
 - name: build
-  pull: always
-  image: python:3.9
+  image: python:3.9-alpine
   commands:
+  - apk --update --quiet add build-base libffi-dev musl-dev libressl-dev python3-dev cargo git
   - git fetch -tq
+  - pip install --upgrade --no-cache-dir pip
   - pip install poetry poetry-dynamic-versioning -qq
   - poetry build
 
 - name: dryrun
-  pull: always
   image: thegeeklab/drone-docker:19
   settings:
     dockerfile: docker/Dockerfile.amd64
     dry_run: true
     password:
       from_secret: docker_password
-    repo: thegeeklab/git-batch
+    repo: thegeeklab/${DRONE_REPO_NAME}
     username:
       from_secret: docker_username
   when:
@@ -288,22 +282,22 @@ platform:
 
 steps:
 - name: build
-  pull: always
-  image: python:3.9
+  image: python:3.9-alpine
   commands:
+  - apk --update --quiet add build-base libffi-dev musl-dev libressl-dev python3-dev cargo git
   - git fetch -tq
+  - pip install --upgrade --no-cache-dir pip
   - pip install poetry poetry-dynamic-versioning -qq
   - poetry build
 
 - name: dryrun
-  pull: always
   image: thegeeklab/drone-docker:19
   settings:
     dockerfile: docker/Dockerfile.arm64
     dry_run: true
     password:
       from_secret: docker_password
-    repo: thegeeklab/git-batch
+    repo: thegeeklab/${DRONE_REPO_NAME}
     username:
       from_secret: docker_username
   when:
@@ -368,22 +362,22 @@ platform:
 
 steps:
 - name: build
-  pull: always
-  image: python:3.9
+  image: python:3.9-alpine
   commands:
+  - apk --update --quiet add build-base libffi-dev musl-dev libressl-dev python3-dev cargo git
   - git fetch -tq
+  - pip install --upgrade --no-cache-dir pip
   - pip install poetry poetry-dynamic-versioning -qq
   - poetry build
 
 - name: dryrun
-  pull: always
   image: thegeeklab/drone-docker:19
   settings:
     dockerfile: docker/Dockerfile.arm
     dry_run: true
     password:
       from_secret: docker_password
-    repo: thegeeklab/git-batch
+    repo: thegeeklab/${DRONE_REPO_NAME}
     username:
       from_secret: docker_username
   when:
@@ -476,6 +470,7 @@ steps:
     - success
 
 - name: pushrm-dockerhub
+  pull: always
   image: chko/docker-pushrm:1
   environment:
     DOCKER_PASS:
@@ -490,6 +485,7 @@ steps:
     - success
 
 - name: pushrm-quay
+  pull: always
   image: chko/docker-pushrm:1
   environment:
     APIKEY__QUAY_IO:
@@ -533,6 +529,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: c1bacd19c919a65a0fc3439efa332e269e4b90ba9b2a31610f2abb39e640709a
+hmac: 3aab823250dbdf8f5078e4239f40bfa472c425f8bf61ffef87650cfcf88629c2
 
 ...
