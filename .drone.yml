@@ -379,7 +379,7 @@ steps:
 - name: build
   image: python:3.9-alpine
   commands:
-  - apk add -Uq --no-cache build-base libressl-dev libffi-dev musl-dev python3-dev git cargo
+  - apk add -Uq --no-cache build-base openssl-dev libffi-dev musl-dev python3-dev git cargo
   - git fetch -tq
   - pip install poetry poetry-dynamic-versioning -qq
   - poetry build
@@ -545,6 +545,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 438c9214d3f09c66e25c1b7dd014e15f21e299a8b1f14cbae00b3dc3e3ed9863
+hmac: 92082ff18beff79f456e64d0248c4f7c10901dbec6c1d41cc49fa0287c0c96bb
 
 ...
