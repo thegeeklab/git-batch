@@ -8,6 +8,7 @@ LABEL org.opencontainers.image.source="https://github.com/thegeeklab/git-batch"
 LABEL org.opencontainers.image.documentation="https://github.com/thegeeklab/git-batch"
 
 ENV PY_COLORS=1
+ENV TZ=UTC
 
 ADD dist/git_batch-*.whl /
 
