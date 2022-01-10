@@ -34,7 +34,7 @@ repository = "https://github.com/thegeeklab/git-batch/"
 version = "0.0.0"
 
 [tool.poetry.dependencies]
-GitPython = "3.1.25"
+GitPython = "3.1.26"
 colorama = "0.4.4"
 python = "^3.7.0"
 python-json-logger = "2.0.2"
