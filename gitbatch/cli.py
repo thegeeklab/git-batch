@@ -3,11 +3,11 @@
 
 import argparse
 import os
-from collections import defaultdict
-from urllib.parse import urlparse
-from pathlib import Path
 import shutil
 import tempfile
+from collections import defaultdict
+from pathlib import Path
+from urllib.parse import urlparse
 
 import git
 
