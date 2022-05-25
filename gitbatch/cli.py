@@ -5,6 +5,9 @@ import argparse
 import os
 from collections import defaultdict
 from urllib.parse import urlparse
+from pathlib import Path
+import shutil
+import tempfile
 
 import git
 
@@ -55,7 +58,7 @@ class GitBatch:
         input_file_raw = os.environ.get("GIT_BATCH_INPUT_FILE", ".batchfile")
         config["input_file"] = normalize_path(input_file_raw)
 
-        config["ignore_existing"] = to_bool(os.environ.get("GIT_BATCH_IGNORE_EXISTING_REPO", True))
+        config["ignore_existing"] = to_bool(os.environ.get("GIT_BATCH_IGNORE_EXISTING", True))
         config["ignore_missing"] = to_bool(os.environ.get("GIT_BATCH_IGNORE_MISSING_REMOTE", True))
 
         return config
@@ -68,7 +71,14 @@ class GitBatch:
                 line = line.strip()
                 if line and not line.startswith("#"):
                     try:
-                        url, branch, dest = [x.strip() for x in line.split(";")]
+                        url, src, dest = [x.strip() for x in line.split(";")]
+                        branch, *_ = [x.strip() for x in src.split(":")]
+
+                        path = None
+                        if len(_) > 0:
+                            path = Path(_[0])
+                            path = path.relative_to(path.anchor)
+
                     except ValueError as e:
                         self.log.sysexit_with_message(
                             "Wrong numer of delimiters in line {line_num}: {exp}".format(
@@ -80,7 +90,8 @@ class GitBatch:
                         url_parts = urlparse(url)
 
                         repo["url"] = url
-                        repo["branch"] = branch or "master"
+                        repo["branch"] = branch or "main"
+                        repo["path"] = path
                         repo["name"] = os.path.basename(url_parts.path)
                         repo["rel_dest"] = dest
                         repo["dest"] = normalize_path(dest) or normalize_path(
@@ -94,36 +105,66 @@ class GitBatch:
                         )
         return repos
 
-    def _repos_clone(self, repos, ignore_existing):
+    def _repos_clone(self, repos):
         for repo in repos:
-            try:
-                options = ["--branch={}".format(repo["branch"]), "--single-branch"]
-                git.Repo.clone_from(repo["url"], repo["dest"], multi_options=options)
-            except git.exc.GitCommandError as e:
-                passed = False
-                err_raw = e.stderr.strip().splitlines()[:-1]
-                err = [
-                    x.split(":", 1)[1].strip().replace(repo["dest"], repo["rel_dest"])
-                    for x in err_raw
-                ]
+            with tempfile.TemporaryDirectory(prefix="gitbatch_") as tmp:
+                try:
+                    options = ["--branch={}".format(repo["branch"]), "--single-branch"]
+                    git.Repo.clone_from(repo["url"], tmp, multi_options=options)
+                    os.makedirs(repo["dest"], 0o750, self.config["ignore_existing"])
+                except git.exc.GitCommandError as e:
+                    skip = False
+                    err_raw = e.stderr.strip().splitlines()[:-1]
+                    err = [
+                        x.split(":", 1)[1].strip().replace(repo["dest"], repo["rel_dest"])
+                        for x in err_raw
+                    ]
 
-                if any(["already exists and is not an empty directory" in item for item in err]):
-                    if self.config["ignore_existing"]:
-                        self.logger.warn("Git error: {}".format("\n".join(err)))
-                        passed = True
+                    if any(["could not find remote branch" in item for item in err]):
+                        if self.config["ignore_missing"]:
+                            skip = True
+                    if not skip:
+                        self.log.sysexit_with_message("Error: {}".format("\n".join(err)))
+                except FileExistsError:
+                    self._file_exist_handler()
 
-                if any(["Could not find remote branch" in item for item in err]):
-                    if self.config["ignore_missing"]:
-                        passed = True
+                try:
+                    path = tmp
+                    if repo["path"]:
+                        path = normalize_path(os.path.join(tmp, repo["path"]))
+                        if not os.path.isdir(path):
+                            raise FileNotFoundError(Path(path).relative_to(tmp))
 
-                if not passed:
-                    self.log.sysexit_with_message("Git error: {}".format("\n".join(err)))
+                    shutil.copytree(
+                        path,
+                        repo["dest"],
+                        ignore=shutil.ignore_patterns(".git"),
+                        dirs_exist_ok=self.config["ignore_existing"]
+                    )
+                except FileExistsError:
+                    self._file_exist_handler()
+                except FileNotFoundError as e:
+                    self.log.sysexit_with_message(
+                        "Error: directory '{}' not found in repository '{}'".format(
+                            e, repo["name"]
+                        )
+                    )
+
+    def _file_exist_handler(self):
+        skip = False
+        err = ["direcory already exists"]
+
+        if self.config["ignore_existing"]:
+            self.logger.warn("Error: {}".format("\n".join(err)))
+            skip = True
+        if not skip:
+            self.log.sysexit_with_message("Error: {}".format("\n".join(err)))
 
     def run(self):
         self.log.set_level(self.config["logging"]["level"])
         if os.path.isfile(self.config["input_file"]):
             repos = self._repos_from_file(self.config["input_file"])
-            self._repos_clone(repos, self.config["ignore_existing"])
+            self._repos_clone(repos)
         else:
             self.log.sysexit_with_message(
                 "The given batch file at '{}' does not exist".format(
