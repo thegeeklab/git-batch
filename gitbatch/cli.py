@@ -155,7 +155,7 @@ class GitBatch:
         err = ["direcory already exists"]
 
         if self.config["ignore_existing"]:
-            self.logger.warn("Error: {}".format("\n".join(err)))
+            self.logger.warning("Error: {}".format("\n".join(err)))
             skip = True
         if not skip:
             self.log.sysexit_with_message("Error: {}".format("\n".join(err)))
