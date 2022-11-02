@@ -101,6 +101,19 @@ steps:
     depends_on:
       - fetch
 
+  - name: python311-pytest
+    image: python:3.11
+    commands:
+      - pip install poetry poetry-dynamic-versioning -qq
+      - poetry config experimental.new-installer false
+      - poetry install
+      - poetry version
+      - poetry run git-batch --help
+    environment:
+      PY_COLORS: 1
+    depends_on:
+      - fetch
+
 trigger:
   ref:
     - refs/heads/main
@@ -545,6 +558,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: 2943f9e1db01759432ebef984d5ec4488e0245f6fcd04906309a62950762afe6
+hmac: d17bcb89eea572d2f6b4286f491979e310e8932878a5c73ea0cd7530cff7da6d
 
 ...
