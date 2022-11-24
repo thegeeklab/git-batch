@@ -8,7 +8,7 @@ platform:
 
 steps:
   - name: yapf
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -19,7 +19,7 @@ steps:
       PY_COLORS: 1
 
   - name: flake8
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -45,7 +45,7 @@ platform:
 
 steps:
   - name: fetch
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
 
@@ -133,7 +133,7 @@ platform:
 
 steps:
   - name: bandit
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -162,7 +162,7 @@ platform:
 
 steps:
   - name: build
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -201,7 +201,7 @@ steps:
         - refs/tags/**
 
   - name: publish-pypi
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -234,7 +234,7 @@ platform:
 
 steps:
   - name: build
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -312,7 +312,7 @@ platform:
 
 steps:
   - name: build
-    image: python:3.10
+    image: python:3.11
     commands:
       - git fetch -tq
       - pip install poetry poetry-dynamic-versioning -qq
@@ -558,6 +558,6 @@ depends_on:
 
 ---
 kind: signature
-hmac: d17bcb89eea572d2f6b4286f491979e310e8932878a5c73ea0cd7530cff7da6d
+hmac: ef3d276be873329d3be72153f6dcdbfc17997e0a255dc7c602c582640a01ad02
 
 ...
