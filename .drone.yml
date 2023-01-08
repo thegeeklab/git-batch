@@ -241,7 +241,7 @@ steps:
       - poetry build
 
   - name: dryrun
-    image: thegeeklab/drone-docker:19
+    image: thegeeklab/drone-docker-buildx:20
     settings:
       dockerfile: docker/Dockerfile.amd64
       dry_run: true
@@ -257,7 +257,7 @@ steps:
       - build
 
   - name: publish-dockerhub
-    image: thegeeklab/drone-docker:19
+    image: thegeeklab/drone-docker-buildx:20
     settings:
       auto_tag: true
       auto_tag_suffix: amd64
@@ -275,7 +275,7 @@ steps:
       - dryrun
 
   - name: publish-quay
-    image: thegeeklab/drone-docker:19
+    image: thegeeklab/drone-docker-buildx:20
     settings:
       auto_tag: true
       auto_tag_suffix: amd64
@@ -319,7 +319,7 @@ steps:
       - poetry build
 
   - name: dryrun
-    image: thegeeklab/drone-docker:19
+    image: thegeeklab/drone-docker-buildx:20
     settings:
       dockerfile: docker/Dockerfile.arm64
       dry_run: true
@@ -335,7 +335,7 @@ steps:
       - build
 
   - name: publish-dockerhub
-    image: thegeeklab/drone-docker:19
+    image: thegeeklab/drone-docker-buildx:20
     settings:
       auto_tag: true
       auto_tag_suffix: arm64
@@ -353,92 +353,11 @@ steps:
       - dryrun
 
   - name: publish-quay
-    image: thegeeklab/drone-docker:19
+    image: thegeeklab/drone-docker-buildx:20
     settings:
       auto_tag: true
       auto_tag_suffix: arm64
       dockerfile: docker/Dockerfile.arm64
-      password:
-        from_secret: quay_password
-      registry: quay.io
-      repo: quay.io/thegeeklab/${DRONE_REPO_NAME}
-      username:
-        from_secret: quay_username
-    when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
-    depends_on:
-      - dryrun
-
-trigger:
-  ref:
-    - refs/heads/main
-    - refs/tags/**
-    - refs/pull/**
-
-depends_on:
-  - security
-
----
-kind: pipeline
-name: build-container-arm
-
-platform:
-  os: linux
-  arch: arm
-
-steps:
-  - name: build
-    image: python:3.10-alpine
-    commands:
-      - apk add -Uq --no-cache build-base openssl-dev libffi-dev musl-dev python3-dev git cargo
-      - git fetch -tq
-      - pip install poetry poetry-dynamic-versioning -qq
-      - poetry build
-    environment:
-      CARGO_NET_GIT_FETCH_WITH_CLI: true
-
-  - name: dryrun
-    image: thegeeklab/drone-docker:19
-    settings:
-      dockerfile: docker/Dockerfile.arm
-      dry_run: true
-      password:
-        from_secret: docker_password
-      repo: thegeeklab/${DRONE_REPO_NAME}
-      username:
-        from_secret: docker_username
-    when:
-      ref:
-        - refs/pull/**
-    depends_on:
-      - build
-
-  - name: publish-dockerhub
-    image: thegeeklab/drone-docker:19
-    settings:
-      auto_tag: true
-      auto_tag_suffix: arm
-      dockerfile: docker/Dockerfile.arm
-      password:
-        from_secret: docker_password
-      repo: thegeeklab/${DRONE_REPO_NAME}
-      username:
-        from_secret: docker_username
-    when:
-      ref:
-        - refs/heads/main
-        - refs/tags/**
-    depends_on:
-      - dryrun
-
-  - name: publish-quay
-    image: thegeeklab/drone-docker:19
-    settings:
-      auto_tag: true
-      auto_tag_suffix: arm
-      dockerfile: docker/Dockerfile.arm
       password:
         from_secret: quay_password
       registry: quay.io
@@ -554,10 +473,9 @@ depends_on:
   - build-package
   - build-container-amd64
   - build-container-arm64
-  - build-container-arm
 
 ---
 kind: signature
-hmac: ef3d276be873329d3be72153f6dcdbfc17997e0a255dc7c602c582640a01ad02
+hmac: c0b73cbd9e38d18a46a8ad2ca1e2d308b6bc2b12bd70f85c6193f15cbbea7e5a
 
 ...
