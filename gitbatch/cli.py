@@ -13,8 +13,7 @@ import git
 
 from gitbatch import __version__
 from gitbatch.logging import SingleLog
-from gitbatch.utils import normalize_path
-from gitbatch.utils import to_bool
+from gitbatch.utils import normalize_path, to_bool
 
 
 class GitBatch:
@@ -31,9 +30,7 @@ class GitBatch:
         parser = argparse.ArgumentParser(
             description=("Clone single branch from all repositories listed in a file")
         )
-        parser.add_argument(
-            "--version", action="version", version="%(prog)s {}".format(__version__)
-        )
+        parser.add_argument("--version", action="version", version=f"%(prog)s {__version__}")
         parser.add_argument(
             "-v", dest="logging.level", action="append_const", const=-1, help="increase log level"
         )
@@ -65,14 +62,14 @@ class GitBatch:
 
     def _repos_from_file(self, src):
         repos = []
-        with open(src, "r") as f:
+        with open(src) as f:
             for num, line in enumerate(f, start=1):
                 repo = {}
                 line = line.strip()
                 if line and not line.startswith("#"):
                     try:
-                        url, src, dest = [x.strip() for x in line.split(";")]
-                        branch, *_ = [x.strip() for x in src.split(":")]
+                        url, src, dest = (x.strip() for x in line.split(";"))
+                        branch, *_ = (x.strip() for x in src.split(":"))
 
                         path = None
                         if len(_) > 0:
@@ -100,9 +97,7 @@ class GitBatch:
 
                         repos.append(repo)
                     else:
-                        self.log.sysexit_with_message(
-                            "Repository Url is not set on line {line_num}".format(line_num=num)
-                        )
+                        self.log.sysexit_with_message(f"Repository Url is not set on line {num}")
         return repos
 
     def _repos_clone(self, repos):
@@ -120,9 +115,11 @@ class GitBatch:
                         for x in err_raw
                     ]
 
-                    if any(["could not find remote branch" in item for item in err]):
-                        if self.config["ignore_missing"]:
-                            skip = True
+                    if (
+                        any(["could not find remote branch" in item for item in err])
+                        and self.config["ignore_missing"]
+                    ):
+                        skip = True
                     if not skip:
                         self.log.sysexit_with_message("Error: {}".format("\n".join(err)))
                 except FileExistsError:
