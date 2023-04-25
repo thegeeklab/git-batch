@@ -116,7 +116,7 @@ class GitBatch:
                     ]
 
                     if (
-                        any(["could not find remote branch" in item for item in err])
+                        any("could not find remote branch" in item for item in err)
                         and self.config["ignore_missing"]
                     ):
                         skip = True
