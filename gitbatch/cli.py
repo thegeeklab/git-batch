@@ -78,9 +78,7 @@ class GitBatch:
 
                     except ValueError as e:
                         self.log.sysexit_with_message(
-                            "Wrong numer of delimiters in line {line_num}: {exp}".format(
-                                line_num=num, exp=e
-                            )
+                            f"Wrong numer of delimiters in line {num}: {e}"
                         )
 
                     if url:
