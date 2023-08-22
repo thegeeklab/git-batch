@@ -19,12 +19,12 @@ steps:
     commands:
       - git fetch -tq
 
-  # pytest:
-  #   image: docker.io/library/python:${PYTHON_VERSION}
-  #   commands:
-  #     - pip install poetry poetry-dynamic-versioning -qq
-  #     - poetry install
-  #     - poetry version
-  #     - poetry run git-batch --help
-  #   environment:
-  #     PY_COLORS: "1"
+  pytest:
+    image: docker.io/library/python:${PYTHON_VERSION}
+    commands:
+      - pip install poetry poetry-dynamic-versioning -qq
+      - poetry install
+      - poetry version
+      - poetry run git-batch --help
+    environment:
+      PY_COLORS: "1"
