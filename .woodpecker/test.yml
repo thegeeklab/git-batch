@@ -7,8 +7,11 @@ when:
 
 matrix:
   PYTHON_VERSION:
-    - "3.10"
-    - "3.11"
+    - docker.io/library/python:3.7
+    - docker.io/library/python:3.8
+    - docker.io/library/python:3.9
+    - docker.io/library/python:3.10
+    - docker.io/library/python:3.11
 
 steps:
   fetch:
@@ -17,7 +20,7 @@ steps:
       - git fetch -tq
 
   pytest:
-    image: docker.io/library/python:${PYTHON_VERSION}
+    image: ${PYTHON_VERSION}
     commands:
       - pip install poetry poetry-dynamic-versioning -qq
       - poetry install
