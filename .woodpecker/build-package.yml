@@ -58,6 +58,6 @@ steps:
     when:
       - event: [tag]
 
-# depends_on:
-#   - lint
+depends_on:
+  - lint
 #   - test

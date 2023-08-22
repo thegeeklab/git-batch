@@ -69,6 +69,6 @@ steps:
         branch:
           - ${CI_REPO_DEFAULT_BRANCH}
 
-# depends_on:
-#   - lint
+depends_on:
+  - lint
 #   - test
