@@ -14,7 +14,7 @@ steps:
       - poetry install
       - poetry run yapf -dr ./gitbatch
     environment:
-      PY_COLORS: 1
+      PY_COLORS: "1"
 
   check-coding:
     image: docker.io/library/python:3.11
@@ -24,4 +24,4 @@ steps:
       - poetry install
       - poetry run ruff ./gitbatch
     environment:
-      PY_COLORS: 1
+      PY_COLORS: "1"

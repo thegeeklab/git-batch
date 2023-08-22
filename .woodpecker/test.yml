@@ -27,4 +27,4 @@ steps:
       - poetry version
       - poetry run git-batch --help
     environment:
-      PY_COLORS: 1
+      PY_COLORS: "1"
