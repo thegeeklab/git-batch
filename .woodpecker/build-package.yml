@@ -60,4 +60,4 @@ steps:
 
 depends_on:
   - lint
-#   - test
+  - test
