@@ -134,7 +134,7 @@ class GitBatch:
                         path,
                         repo["dest"],
                         ignore=shutil.ignore_patterns(".git"),
-                        dirs_exist_ok=self.config["ignore_existing"]
+                        dirs_exist_ok=self.config["ignore_existing"],
                     )
                 except FileExistsError:
                     self._file_exist_handler()
