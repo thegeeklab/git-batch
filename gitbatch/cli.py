@@ -14,6 +14,7 @@ import git
 from gitbatch import __version__
 from gitbatch.logging import SingleLog
 from gitbatch.utils import normalize_path, to_bool
+from gitbatch.utils.copy import copy_file_with_basic_stats
 
 
 class GitBatch:
@@ -135,6 +136,7 @@ class GitBatch:
                         repo["dest"],
                         ignore=shutil.ignore_patterns(".git"),
                         dirs_exist_ok=self.config["ignore_existing"],
+                        copy_function=copy_file_with_basic_stats,
                     )
                 except FileExistsError:
                     self._file_exist_handler()

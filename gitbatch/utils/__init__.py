@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Global utility methods and classes."""
 
 import os
