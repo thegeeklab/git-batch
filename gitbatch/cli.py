@@ -3,17 +3,17 @@
 
 import argparse
 import os
-import shutil
 import tempfile
 from collections import defaultdict
 from pathlib import Path
+from shutil import ignore_patterns
 from urllib.parse import urlparse
 
 import git
 
 from gitbatch import __version__
 from gitbatch.logging import SingleLog
-from gitbatch.utils import normalize_path, to_bool
+from gitbatch.utils import copy, normalize_path, to_bool
 
 
 class GitBatch:
@@ -130,10 +130,10 @@ class GitBatch:
                         if not os.path.isdir(path):
                             raise FileNotFoundError(Path(path).relative_to(tmp))
 
-                    shutil.copytree(
+                    copy.simplecopytree(
                         path,
                         repo["dest"],
-                        ignore=shutil.ignore_patterns(".git"),
+                        ignore=ignore_patterns(".git"),
                         dirs_exist_ok=self.config["ignore_existing"],
                     )
                 except FileExistsError:
