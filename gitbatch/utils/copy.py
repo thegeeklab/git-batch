@@ -121,7 +121,7 @@ def simplecopytree(
 
 
 def simplecopystat(src, dst, *, follow_symlinks=True):
-    def _nop(*args, ns=None, follow_symlinks=None):  # noqa
+    def _nop(*args, ns=None, follow_symlinks=None):
         pass
 
     # follow symlinks (aka don't not follow symlinks)
