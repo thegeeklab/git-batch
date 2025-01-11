@@ -24,7 +24,7 @@ include = ["LICENSE"]
 keywords = ["git", "batch", "automation"]
 license = "MIT"
 name = "git-batch"
-packages = [{ include = "gitbatch" }]
+packages = [{ include = "gitbatch", format = ["sdist", "wheel"] }]
 readme = "README.md"
 repository = "https://github.com/thegeeklab/git-batch/"
 version = "0.0.0"
