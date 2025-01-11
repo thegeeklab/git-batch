@@ -39,7 +39,7 @@ python-json-logger = "3.2.1"
 git-batch = "gitbatch.cli:main"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "0.8.4"
+ruff = "0.9.1"
 pytest = "8.3.4"
 pytest-mock = "3.14.0"
 pytest-cov = "6.0.0"
@@ -124,6 +124,9 @@ select = [
   "ERA",
   "RUF",
 ]
+
+[tool.ruff.lint.flake8-builtins]
+builtins-allowed-modules = ["logging", "copy"]
 
 [tool.ruff.format]
 quote-style = "double"
