@@ -39,7 +39,7 @@ python-json-logger = "3.3.0"
 git-batch = "gitbatch.cli:main"
 
 [tool.poetry.group.dev.dependencies]
-ruff = "0.11.6"
+ruff = "0.11.7"
 pytest = "8.3.5"
 pytest-mock = "3.14.0"
 pytest-cov = "6.1.1"
