@@ -1,0 +1,35 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "dictionaries": ["en_us", "python"],
+  "words": [
+    "Kaussow",
+    "thegeeklab",
+    "geekdoc",
+    "xoxys",
+    "jsonlogger",
+    "levelname",
+    "levelno",
+    "sysexit",
+    "gitbatch",
+    "pythonjsonlogger",
+    "simplecopytree",
+    "_winapi",
+    "winerror",
+    "fspath"
+  ],
+  "ignorePaths": [
+    ".woodpecker",
+    ".cspell.json",
+    ".git/**/*",
+    ".gitignore",
+    ".golangci.yaml",
+    ".golangci.yml",
+    ".vscode",
+    "pyproject.toml",
+    "Makefile",
+    "*.svg"
+  ],
+  "ignoreRegExpList": ["&\\S+;", "{{<.+>}}"],
+  "enableFiletypes": ["dockercompose"]
+}

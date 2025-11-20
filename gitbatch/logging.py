@@ -62,7 +62,7 @@ class MultilineJsonFormatter(jsonlogger.JsonFormatter):
 class Log:
     """Base logging object."""
 
-    def __init__(self, level=logging.WARNING, name="ansibledoctor", json=False):
+    def __init__(self, level=logging.WARNING, name="gitbatch", json=False):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
         self.logger.addHandler(self._get_error_handler(json=json))
