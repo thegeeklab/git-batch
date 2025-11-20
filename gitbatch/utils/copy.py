@@ -36,43 +36,43 @@ def _copytree(
     os.makedirs(dst, exist_ok=dirs_exist_ok)
     errors = []
 
-    for srcentry in entries:
-        if srcentry.name in ignored_names:
+    for src_entry in entries:
+        if src_entry.name in ignored_names:
             continue
-        srcname = os.path.join(src, srcentry.name)
-        dstname = os.path.join(dst, srcentry.name)
+        src_name = os.path.join(src, src_entry.name)
+        dst_name = os.path.join(dst, src_entry.name)
         try:
-            is_symlink = srcentry.is_symlink()
+            is_symlink = src_entry.is_symlink()
             if is_symlink and os.name == "nt":
                 # Special check for directory junctions, which appear as
                 # symlinks but we want to recurse.
-                lstat = srcentry.stat(follow_symlinks=False)
+                lstat = src_entry.stat(follow_symlinks=False)
                 if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
                     is_symlink = False
             if is_symlink:
-                linkto = os.readlink(srcname)
+                link_to = os.readlink(src_name)
                 if symlinks:
-                    os.symlink(linkto, dstname)
-                    simplecopystat(srcname, dstname, follow_symlinks=(not symlinks))
+                    os.symlink(link_to, dst_name)
+                    simple_copy_stat(src_name, dst_name, follow_symlinks=(not symlinks))
                 else:
-                    if not os.path.exists(linkto) and ignore_dangling_symlinks:
+                    if not os.path.exists(link_to) and ignore_dangling_symlinks:
                         continue
 
-                    if srcentry.is_dir():
-                        simplecopytree(
-                            srcname,
-                            dstname,
+                    if src_entry.is_dir():
+                        simple_copytree(
+                            src_name,
+                            dst_name,
                             symlinks,
                             ignore,
                             ignore_dangling_symlinks,
                             dirs_exist_ok,
                         )
                     else:
-                        simplecopy(srcname, dstname)
-            elif srcentry.is_dir():
-                simplecopytree(
-                    srcname,
-                    dstname,
+                        simple_copy(src_name, dst_name)
+            elif src_entry.is_dir():
+                simple_copytree(
+                    src_name,
+                    dst_name,
                     symlinks,
                     ignore,
                     ignore_dangling_symlinks,
@@ -80,16 +80,16 @@ def _copytree(
                 )
             else:
                 # Will raise a SpecialFileError for unsupported file types
-                simplecopy(srcname, dstname)
+                simple_copy(src_name, dst_name)
         # catch the Error from the recursive copytree so that we can
         # continue with other files
         except Error as err:
             errors.extend(err.args[0])
         except OSError as why:
-            errors.append((srcname, dstname, str(why)))
+            errors.append((src_name, dst_name, str(why)))
 
     try:
-        simplecopystat(src, dst)
+        simple_copy_stat(src, dst)
     except OSError as why:
         # Copying file access times may fail on Windows
         if getattr(why, "winerror", None) is None:
@@ -99,7 +99,7 @@ def _copytree(
     return dst
 
 
-def simplecopytree(
+def simple_copytree(
     src,
     dst,
     symlinks=False,
@@ -120,7 +120,7 @@ def simplecopytree(
     )
 
 
-def simplecopystat(src, dst, *, follow_symlinks=True):
+def simple_copy_stat(src, dst, *, follow_symlinks=True):
     def _nop(*args, ns=None, follow_symlinks=None):
         pass
 
@@ -150,7 +150,7 @@ def simplecopystat(src, dst, *, follow_symlinks=True):
         lookup("chmod")(dst, mode, follow_symlinks=follow)
 
 
-def simplecopy(src, dst, *, follow_symlinks=True):
+def simple_copy(src, dst, *, follow_symlinks=True):
     if os.path.isdir(dst):
         dst = os.path.join(dst, os.path.basename(src))
 
@@ -176,5 +176,5 @@ def simplecopy(src, dst, *, follow_symlinks=True):
                 raise
 
     copy(src, dst, follow_symlinks=follow_symlinks)
-    simplecopystat(src, dst, follow_symlinks=follow_symlinks)
+    simple_copy_stat(src, dst, follow_symlinks=follow_symlinks)
     return dst

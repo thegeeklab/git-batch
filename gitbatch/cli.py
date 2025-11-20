@@ -78,7 +78,7 @@ class GitBatch:
 
                     except ValueError as e:
                         self.log.sysexit_with_message(
-                            f"Wrong numer of delimiters in line {num}: {e}"
+                            f"Wrong number of delimiters in line {num}: {e}"
                         )
 
                     if url:
@@ -147,7 +147,7 @@ class GitBatch:
 
     def _file_exist_handler(self):
         skip = False
-        err = ["direcory already exists"]
+        err = ["directory already exists"]
 
         if self.config["ignore_existing"]:
             self.logger.warning("Error: {}".format("\n".join(err)))

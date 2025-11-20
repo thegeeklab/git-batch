@@ -6,6 +6,17 @@ when:
       - ${CI_REPO_DEFAULT_BRANCH}
 
 steps:
+  - name: markdownlint
+    image: quay.io/thegeeklab/markdownlint-cli
+    depends_on: []
+    commands:
+      - markdownlint 'README.md' 'CONTRIBUTING.md'
+
+  - name: spellcheck
+    image: ghcr.io/streetsidesoftware/cspell
+    commands:
+      - cspell-cli lint . --gitignore --color
+
   - name: check-format
     image: docker.io/library/python:3.14
     depends_on: []
@@ -25,3 +36,12 @@ steps:
       - poetry run ruff check ./${CI_REPO_NAME//-/}
     environment:
       PY_COLORS: "1"
+
+  - name: link-validation
+    image: docker.io/lycheeverse/lychee
+    depends_on: []
+    commands:
+      - lychee --no-progress --format detailed README.md
+    environment:
+      GITHUB_TOKEN:
+        from_secret: github_token_ro
