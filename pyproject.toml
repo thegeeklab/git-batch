@@ -44,6 +44,7 @@ pytest = "9.0.1"
 pytest-mock = "3.15.1"
 pytest-cov = "7.0.0"
 toml = "0.10.2"
+mypy = "1.10.0"
 
 [tool.poetry-dynamic-versioning]
 enable = true
@@ -51,7 +52,7 @@ style = "semver"
 vcs = "git"
 
 [tool.pytest.ini_options]
-addopts = "gitbatch --cov=gitbatch --cov-report=xml:coverage.xml --cov-report=term --no-cov-on-fail"
+addopts = "gitbatch --cov=gitbatch --cov-report=xml:coverage.xml --cov-report=term-missing --no-cov-on-fail"
 filterwarnings = [
   "ignore::FutureWarning",
   "ignore::DeprecationWarning",
@@ -122,3 +123,15 @@ builtins-allowed-modules = ["logging", "copy"]
 quote-style = "double"
 indent-style = "space"
 line-ending = "lf"
+
+[tool.mypy]
+explicit_package_bases = true
+no_implicit_optional = false
+strict_optional = false
+allow_redefinition = true
+allow_untyped_globals = true
+local_partial_types = false
+warn_unused_ignores = true
+check_untyped_defs = true
+ignore_missing_imports = true
+files = ["gitbatch/"]

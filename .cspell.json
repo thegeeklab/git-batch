@@ -13,7 +13,6 @@
     "sysexit",
     "gitbatch",
     "pythonjsonlogger",
-    "simplecopytree",
     "_winapi",
     "winerror",
     "fspath"

@@ -4,9 +4,9 @@
 import argparse
 import os
 import tempfile
-from collections import defaultdict
 from pathlib import Path
 from shutil import ignore_patterns
+from typing import Any
 from urllib.parse import urlparse
 
 import git
@@ -19,14 +19,14 @@ from gitbatch.utils import copy, normalize_path, to_bool
 class GitBatch:
     """Handles git operations."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.log = SingleLog()
         self.logger = self.log.logger
         self.args = self._cli_args()
-        self.config = self._config()
+        self.config: dict[str, Any] = self._config()
         self.run()
 
-    def _cli_args(self):
+    def _cli_args(self) -> argparse.Namespace:
         parser = argparse.ArgumentParser(
             description=("Clone single branch from all repositories listed in a file")
         )
@@ -40,8 +40,9 @@ class GitBatch:
 
         return parser.parse_args()
 
-    def _config(self):
-        config = defaultdict(dict)
+    def _config(self) -> dict[str, Any]:
+        config: dict[str, Any] = {}
+        config["logging"] = {}
 
         # Override correct log level from argparse
         levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]
@@ -60,11 +61,11 @@ class GitBatch:
 
         return config
 
-    def _repos_from_file(self, src):
+    def _repos_from_file(self, src: str) -> list[dict[str, Any]]:
         repos = []
         with open(src) as f:
             for num, line in enumerate(f, start=1):
-                repo = {}
+                repo: dict[str, Any] = {}
                 line = line.strip()
                 if line and not line.startswith("#"):
                     try:
@@ -89,8 +90,11 @@ class GitBatch:
                         repo["path"] = path
                         repo["name"] = os.path.basename(url_parts.path)
                         repo["rel_dest"] = dest
-                        repo["dest"] = normalize_path(dest) or normalize_path(
-                            "./{}".format(repo["name"])
+                        dest_path = normalize_path(dest)
+                        if dest_path is None:
+                            dest_path = normalize_path("./{}".format(repo["name"]))
+                        repo["dest"] = (
+                            dest_path if dest_path is not None else "./{}".format(repo["name"])
                         )
 
                         repos.append(repo)
@@ -98,7 +102,7 @@ class GitBatch:
                         self.log.sysexit_with_message(f"Repository Url is not set on line {num}")
         return repos
 
-    def _repos_clone(self, repos):
+    def _repos_clone(self, repos: list[dict[str, Any]]) -> None:
         for repo in repos:
             with tempfile.TemporaryDirectory(prefix="gitbatch_") as tmp:
                 try:
@@ -126,11 +130,14 @@ class GitBatch:
                 try:
                     path = tmp
                     if repo["path"]:
-                        path = normalize_path(os.path.join(tmp, repo["path"]))
+                        normalized_path = normalize_path(os.path.join(tmp, repo["path"]))
+                        if normalized_path is None:
+                            raise ValueError(f"Invalid path: {repo['path']}")
+                        path = normalized_path
                         if not os.path.isdir(path):
                             raise FileNotFoundError(Path(path).relative_to(tmp))
 
-                    copy.simplecopytree(
+                    copy.simple_copy_tree(
                         path,
                         repo["dest"],
                         ignore=ignore_patterns(".git"),
@@ -145,7 +152,7 @@ class GitBatch:
                         )
                     )
 
-    def _file_exist_handler(self):
+    def _file_exist_handler(self) -> None:
         skip = False
         err = ["directory already exists"]
 
@@ -155,7 +162,7 @@ class GitBatch:
         if not skip:
             self.log.sysexit_with_message("Error: {}".format("\n".join(err)))
 
-    def run(self):
+    def run(self) -> None:
         self.log.set_level(self.config["logging"]["level"])
         if os.path.isfile(self.config["input_file"]):
             repos = self._repos_from_file(self.config["input_file"])
@@ -168,5 +175,5 @@ class GitBatch:
             )
 
 
-def main():
+def main() -> None:
     GitBatch()

@@ -1,16 +1,17 @@
 """Global utility methods and classes."""
 
 import os
+from typing import Any
 
 
-def normalize_path(path):
+def normalize_path(path: str | None) -> str | None:
     if path:
         return os.path.abspath(os.path.expanduser(os.path.expandvars(path)))
 
     return None
 
 
-def strtobool(value):
+def strtobool(value: Any) -> bool:
     """Convert a string representation of truth to true or false."""
 
     _map = {
@@ -34,16 +35,16 @@ def strtobool(value):
         raise ValueError(f'"{value}" is not a valid bool value') from err
 
 
-def to_bool(string):
+def to_bool(string: Any) -> bool:
     return bool(strtobool(str(string)))
 
 
 class Singleton(type):
     """Meta singleton class."""
 
-    _instances = {}
+    _instances: dict[type, Any] = {}
 
-    def __call__(cls, *args, **kwargs):
+    def __call__(cls, *args: Any, **kwargs: Any) -> Any:
         if cls not in cls._instances:
             cls._instances[cls] = super().__call__(*args, **kwargs)
         return cls._instances[cls]
