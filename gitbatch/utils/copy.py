@@ -59,7 +59,7 @@ def _copytree(
                         continue
 
                     if src_entry.is_dir():
-                        simple_copytree(
+                        simple_copy_tree(
                             src_name,
                             dst_name,
                             symlinks,
@@ -70,7 +70,7 @@ def _copytree(
                     else:
                         simple_copy(src_name, dst_name)
             elif src_entry.is_dir():
-                simple_copytree(
+                simple_copy_tree(
                     src_name,
                     dst_name,
                     symlinks,
@@ -99,7 +99,7 @@ def _copytree(
     return dst
 
 
-def simple_copytree(
+def simple_copy_tree(
     src,
     dst,
     symlinks=False,

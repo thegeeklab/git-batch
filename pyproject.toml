@@ -34,6 +34,7 @@ GitPython = "3.1.45"
 colorama = "0.4.6"
 python = "^3.11.0"
 python-json-logger = "4.0.0"
+pylint = "^4.0.3"
 
 [tool.poetry.scripts]
 git-batch = "gitbatch.cli:main"
@@ -51,7 +52,7 @@ style = "semver"
 vcs = "git"
 
 [tool.pytest.ini_options]
-addopts = "gitbatch --cov=gitbatch --cov-report=xml:coverage.xml --cov-report=term --no-cov-on-fail"
+addopts = "gitbatch --cov=gitbatch --cov-report=xml:coverage.xml --cov-report=term-missing --no-cov-on-fail"
 filterwarnings = [
   "ignore::FutureWarning",
   "ignore::DeprecationWarning",
