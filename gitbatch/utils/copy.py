@@ -164,12 +164,31 @@ def simple_copy(src: str, dst: str, *, follow_symlinks: bool = True) -> str:
     if os.path.isdir(dst):
         dst = os.path.join(dst, os.path.basename(src))
 
-    if _winapi is not None:
-        # Skip Windows-specific copy flags since they're not available in all Python versions
-        with contextlib.suppress(OSError):
-            copy(src, dst, follow_symlinks=follow_symlinks)
-    else:
-        copy(src, dst, follow_symlinks=follow_symlinks)
+    if sys.platform == "win32" and hasattr(_winapi, "CopyFile2"):
+        src_ = os.fsdecode(src)
+        dst_ = os.fsdecode(dst)
+        flags = _winapi.COPY_FILE_ALLOW_DECRYPTED_DESTINATION  # for compat
+        if not follow_symlinks:
+            flags |= _winapi.COPY_FILE_COPY_SYMLINK
+        try:
+            _winapi.CopyFile2(src_, dst_, flags)
+            return dst
+        except OSError as exc:
+            if hasattr(exc, "winerror"):
+                if exc.winerror == _winapi.ERROR_PRIVILEGE_NOT_HELD and not follow_symlinks:
+                    # Likely encountered a symlink we aren't allowed to create.
+                    # Fall back on the old code
+                    pass
+                elif exc.winerror == _winapi.ERROR_ACCESS_DENIED:
+                    # Possibly encountered a hidden or readonly file we can't
+                    # overwrite. Fall back on old code
+                    pass
+                else:
+                    raise
+            else:
+                raise
 
+    # Fallback for non-Windows or if CopyFile2 fails
+    copy(src, dst, follow_symlinks=follow_symlinks)
     simple_copy_stat(src, dst, follow_symlinks=follow_symlinks)
     return dst
