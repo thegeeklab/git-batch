@@ -1,13 +1,12 @@
 import os
 import pytest
 from unittest.mock import patch, MagicMock
-from collections import defaultdict
 from pathlib import Path
 
 from gitbatch.cli import GitBatch
 
 @pytest.fixture
-def gitbatch_instance():
+def gitbatch_instance() -> GitBatch:
     """Create a GitBatch instance with run() method mocked to prevent execution."""
     with patch("argparse.ArgumentParser.parse_args") as mock_parse_args, \
          patch.object(GitBatch, "run") as mock_run:
@@ -15,19 +14,19 @@ def gitbatch_instance():
         mock_run.return_value = None
         return GitBatch()
 
-def test_initialization(gitbatch_instance):
+def test_initialization(gitbatch_instance: GitBatch) -> None:
     """Test that GitBatch initializes correctly."""
     assert gitbatch_instance.log is not None
     assert gitbatch_instance.logger is not None
     assert gitbatch_instance.args is not None
     assert gitbatch_instance.config is not None
 
-def test_cli_args(gitbatch_instance):
+def test_cli_args(gitbatch_instance: GitBatch) -> None:
     """Test that CLI arguments are parsed correctly."""
     # Test that args is a namespace object
     assert hasattr(gitbatch_instance.args, "__dict__")
 
-def test_config(gitbatch_instance):
+def test_config(gitbatch_instance: GitBatch) -> None:
     """Test that configuration is set up correctly."""
     with patch("os.environ.get") as mock_get:
         mock_get.side_effect = lambda key, default=None: {
@@ -44,7 +43,7 @@ def test_config(gitbatch_instance):
         assert config["ignore_existing"] is True
         assert config["ignore_missing"] is False
 
-def test_repos_from_file(tmp_path, gitbatch_instance):
+def test_repos_from_file(tmp_path: Path, gitbatch_instance: GitBatch) -> None:
     """Test that repositories are correctly parsed from a file."""
     # Create a test file
     test_file = tmp_path / "test_repos.txt"
@@ -61,7 +60,7 @@ def test_repos_from_file(tmp_path, gitbatch_instance):
     assert repos[0]["dest"].endswith("dest")
     assert repos[0]["name"] == "repo.git"
 
-def test_repos_from_file_empty(tmp_path, gitbatch_instance):
+def test_repos_from_file_empty(tmp_path: Path, gitbatch_instance: GitBatch) -> None:
     """Test that empty lines are skipped."""
     # Create an empty file
     test_file = tmp_path / "empty.txt"
@@ -70,7 +69,7 @@ def test_repos_from_file_empty(tmp_path, gitbatch_instance):
     repos = gitbatch_instance._repos_from_file(str(test_file))
     assert len(repos) == 0
 
-def test_repos_from_file_comment(tmp_path, gitbatch_instance):
+def test_repos_from_file_comment(tmp_path: Path, gitbatch_instance: GitBatch) -> None:
     """Test that comment lines are skipped."""
     # Create a file with a comment
     test_file = tmp_path / "comment.txt"
@@ -79,7 +78,7 @@ def test_repos_from_file_comment(tmp_path, gitbatch_instance):
     repos = gitbatch_instance._repos_from_file(str(test_file))
     assert len(repos) == 0
 
-def test_repos_from_file_invalid_format(tmp_path, gitbatch_instance):
+def test_repos_from_file_invalid_format(tmp_path: Path, gitbatch_instance: GitBatch) -> None:
     """Test that invalid format raises an error."""
     # Create a file with invalid format
     test_file = tmp_path / "invalid.txt"
@@ -88,7 +87,7 @@ def test_repos_from_file_invalid_format(tmp_path, gitbatch_instance):
     with pytest.raises(SystemExit):
         gitbatch_instance._repos_from_file(str(test_file))
 
-def test_file_exist_handler(gitbatch_instance):
+def test_file_exist_handler(gitbatch_instance: GitBatch) -> None:
     """Test that file existence is handled correctly."""
     # Test with ignore_existing=True
     gitbatch_instance.config["ignore_existing"] = True
@@ -102,7 +101,7 @@ def test_file_exist_handler(gitbatch_instance):
         gitbatch_instance._file_exist_handler()
         mock_log.assert_called_once()
 
-def test_run(gitbatch_instance):
+def test_run(gitbatch_instance: GitBatch) -> None:
     """Test that run method executes correctly."""
     with patch("os.path.isfile") as mock_isfile:
         mock_isfile.return_value = True

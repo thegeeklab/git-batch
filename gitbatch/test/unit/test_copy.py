@@ -4,6 +4,8 @@ import tempfile
 import shutil
 from unittest.mock import patch, MagicMock
 import pytest
+from typing import List, Optional, Union, Any, Callable, Tuple
+from pathlib import Path
 
 from gitbatch.utils.copy import (
     _islink,
@@ -21,7 +23,7 @@ from gitbatch.utils.copy import (
         ("symlink", True),
     ],
 )
-def test_islink(path_type, is_link):
+def test_islink(path_type: str, is_link: bool) -> None:
     """Test the _islink function with different path types."""
     if path_type == "DirEntry":
         mock_entry = MagicMock()
@@ -45,7 +47,7 @@ def test_islink(path_type, is_link):
         (False, True, True),
     ],
 )
-def test_copytree(tmp_path, symlinks, ignore_dangling, dirs_exist_ok):
+def test_copytree(tmp_path: Path, symlinks: bool, ignore_dangling: bool, dirs_exist_ok: bool) -> None:
     """Test the _copytree function with different parameters."""
     src_dir = tmp_path / "src"
     dst_dir = tmp_path / "dst"
@@ -84,7 +86,7 @@ def test_copytree(tmp_path, symlinks, ignore_dangling, dirs_exist_ok):
         (False, True, True),
     ],
 )
-def test_simple_copy_tree(tmp_path, symlinks, ignore_dangling, dirs_exist_ok):
+def test_simple_copy_tree(tmp_path: Path, symlinks: bool, ignore_dangling: bool, dirs_exist_ok: bool) -> None:
     """Test the simple_copy_tree function with different parameters."""
     src_dir = tmp_path / "src"
     dst_dir = tmp_path / "dst"
@@ -107,7 +109,7 @@ def test_simple_copy_tree(tmp_path, symlinks, ignore_dangling, dirs_exist_ok):
     assert result == str(dst_dir)
     assert (dst_dir / "test.txt").exists()
 
-def test_simple_copy_stat(tmp_path):
+def test_simple_copy_stat(tmp_path: Path) -> None:
     """Test the simple_copy_stat function."""
     src = tmp_path / "src"
     dst = tmp_path / "dst"
@@ -121,7 +123,7 @@ def test_simple_copy_stat(tmp_path):
     "follow_symlinks",
     [True, False],
 )
-def test_simple_copy(tmp_path, follow_symlinks):
+def test_simple_copy(tmp_path: Path, follow_symlinks: bool) -> None:
     """Test the simple_copy function with different follow_symlinks values."""
     src = tmp_path / "src"
     src.write_text("test content")

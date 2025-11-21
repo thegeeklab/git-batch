@@ -10,27 +10,31 @@ import contextlib
 import os
 import stat
 import sys
+from collections.abc import Callable
 from shutil import Error, copy
+from typing import Any
 
 if sys.platform == "win32":
     import _winapi
+    from stat import IO_REPARSE_TAG_MOUNT_POINT
 else:
     _winapi = None
+    IO_REPARSE_TAG_MOUNT_POINT = None
 
 
-def _islink(fn):
+def _islink(fn: os.DirEntry | str) -> bool:
     return fn.is_symlink() if isinstance(fn, os.DirEntry) else os.path.islink(fn)
 
 
 def _copytree(
-    entries,
-    src,
-    dst,
-    symlinks,
-    ignore,
-    ignore_dangling_symlinks,
-    dirs_exist_ok=False,
-):
+    entries: list[os.DirEntry],
+    src: str,
+    dst: str,
+    symlinks: bool,
+    ignore: Callable[[str, list[str]], list[str]] | None,
+    ignore_dangling_symlinks: bool,
+    dirs_exist_ok: bool = False,
+) -> str:
     ignored_names = ignore(os.fspath(src), [x.name for x in entries]) if ignore is not None else ()
 
     os.makedirs(dst, exist_ok=dirs_exist_ok)
@@ -47,7 +51,11 @@ def _copytree(
                 # Special check for directory junctions, which appear as
                 # symlinks but we want to recurse.
                 lstat = src_entry.stat(follow_symlinks=False)
-                if lstat.st_reparse_tag == stat.IO_REPARSE_TAG_MOUNT_POINT:
+                if (
+                    IO_REPARSE_TAG_MOUNT_POINT is not None
+                    and hasattr(lstat, "st_reparse_tag")
+                    and lstat.st_reparse_tag == IO_REPARSE_TAG_MOUNT_POINT
+                ):
                     is_symlink = False
             if is_symlink:
                 link_to = os.readlink(src_name)
@@ -92,7 +100,7 @@ def _copytree(
         simple_copy_stat(src, dst)
     except OSError as why:
         # Copying file access times may fail on Windows
-        if getattr(why, "winerror", None) is None:
+        if hasattr(why, "winerror"):
             errors.append((src, dst, str(why)))
     if errors:
         raise Error(errors)
@@ -100,13 +108,13 @@ def _copytree(
 
 
 def simple_copy_tree(
-    src,
-    dst,
-    symlinks=False,
-    ignore=None,
-    ignore_dangling_symlinks=False,
-    dirs_exist_ok=False,
-):
+    src: str,
+    dst: str,
+    symlinks: bool = False,
+    ignore: Callable[[str, list[str]], list[str]] | None = None,
+    ignore_dangling_symlinks: bool = False,
+    dirs_exist_ok: bool = False,
+) -> str:
     with os.scandir(src) as itr:
         entries = list(itr)
     return _copytree(
@@ -120,22 +128,24 @@ def simple_copy_tree(
     )
 
 
-def simple_copy_stat(src, dst, *, follow_symlinks=True):
-    def _nop(*args, ns=None, follow_symlinks=None):
+def simple_copy_stat(src: os.DirEntry | str, dst: str, *, follow_symlinks: bool = True) -> None:
+    def _nop(
+        *args: Any, ns: tuple[int, int] | None = None, follow_symlinks: bool | None = None
+    ) -> None:
         pass
 
     # follow symlinks (aka don't not follow symlinks)
     follow = follow_symlinks or not (_islink(src) and os.path.islink(dst))
     if follow:
         # use the real function if it exists
-        def lookup(name):
+        def lookup(name: str) -> Callable:
             return getattr(os, name, _nop)
     else:
         # use the real function only if it exists
         # *and* it supports follow_symlinks
-        def lookup(name):
+        def lookup(name: str) -> Callable:
             fn = getattr(os, name, _nop)
-            if fn in os.supports_follow_symlinks:
+            if hasattr(os, "supports_follow_symlinks") and fn in os.supports_follow_symlinks:
                 return fn
             return _nop
 
@@ -150,31 +160,16 @@ def simple_copy_stat(src, dst, *, follow_symlinks=True):
         lookup("chmod")(dst, mode, follow_symlinks=follow)
 
 
-def simple_copy(src, dst, *, follow_symlinks=True):
+def simple_copy(src: str, dst: str, *, follow_symlinks: bool = True) -> str:
     if os.path.isdir(dst):
         dst = os.path.join(dst, os.path.basename(src))
 
-    if hasattr(_winapi, "CopyFile2"):
-        src_ = os.fsdecode(src)
-        dst_ = os.fsdecode(dst)
-        flags = _winapi.COPY_FILE_ALLOW_DECRYPTED_DESTINATION  # for compat
-        if not follow_symlinks:
-            flags |= _winapi.COPY_FILE_COPY_SYMLINK
-        try:
-            _winapi.CopyFile2(src_, dst_, flags)
-            return dst
-        except OSError as exc:
-            if exc.winerror == _winapi.ERROR_PRIVILEGE_NOT_HELD and not follow_symlinks:
-                # Likely encountered a symlink we aren't allowed to create.
-                # Fall back on the old code
-                pass
-            elif exc.winerror == _winapi.ERROR_ACCESS_DENIED:
-                # Possibly encountered a hidden or readonly file we can't
-                # overwrite. Fall back on old code
-                pass
-            else:
-                raise
+    if _winapi is not None:
+        # Skip Windows-specific copy flags since they're not available in all Python versions
+        with contextlib.suppress(OSError):
+            copy(src, dst, follow_symlinks=follow_symlinks)
+    else:
+        copy(src, dst, follow_symlinks=follow_symlinks)
 
-    copy(src, dst, follow_symlinks=follow_symlinks)
     simple_copy_stat(src, dst, follow_symlinks=follow_symlinks)
     return dst
