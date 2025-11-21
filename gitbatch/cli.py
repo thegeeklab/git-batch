@@ -51,7 +51,7 @@ class GitBatch:
         if tmp_dict.get("logging.level"):
             for adjustment in tmp_dict["logging.level"]:
                 log_level = min(len(levels) - 1, max(log_level + adjustment, 0))
-        config["logging"] = {"level": levels[log_level]}
+        config["logging"]["level"] = levels[log_level]
 
         input_file_raw = os.environ.get("GIT_BATCH_INPUT_FILE", ".batchfile")
         config["input_file"] = normalize_path(input_file_raw)
