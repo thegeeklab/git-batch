@@ -4,7 +4,6 @@
 import argparse
 import os
 import tempfile
-from collections import defaultdict
 from pathlib import Path
 from shutil import ignore_patterns
 from typing import Any
@@ -42,7 +41,8 @@ class GitBatch:
         return parser.parse_args()
 
     def _config(self) -> dict[str, Any]:
-        config: defaultdict[str, Any] = defaultdict(lambda: None)
+        config: dict[str, Any] = {}
+        config["logging"] = {}
 
         # Override correct log level from argparse
         levels = ["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"]

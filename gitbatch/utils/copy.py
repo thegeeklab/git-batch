@@ -31,7 +31,7 @@ def _copytree(
     src: str,
     dst: str,
     symlinks: bool,
-    ignore: Callable[[str, list[str]], list[str]] | None,
+    ignore: Callable[[str, list[str]], set[str]] | None,
     ignore_dangling_symlinks: bool,
     dirs_exist_ok: bool = False,
 ) -> str:
@@ -111,7 +111,7 @@ def simple_copy_tree(
     src: str,
     dst: str,
     symlinks: bool = False,
-    ignore: Callable[[str, list[str]], list[str]] | None = None,
+    ignore: Callable[[str, list[str]], set[str]] | None = None,
     ignore_dangling_symlinks: bool = False,
     dirs_exist_ok: bool = False,
 ) -> str:
