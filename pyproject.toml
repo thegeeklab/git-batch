@@ -125,13 +125,5 @@ indent-style = "space"
 line-ending = "lf"
 
 [tool.mypy]
-explicit_package_bases = true
-no_implicit_optional = false
 strict_optional = false
-allow_redefinition = true
-allow_untyped_globals = true
-local_partial_types = false
-warn_unused_ignores = true
-check_untyped_defs = true
-ignore_missing_imports = true
 files = ["gitbatch/"]
