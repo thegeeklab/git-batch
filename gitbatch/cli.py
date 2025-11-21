@@ -137,7 +137,7 @@ class GitBatch:
                         if not os.path.isdir(path):
                             raise FileNotFoundError(Path(path).relative_to(tmp))
 
-                    copy.simplecopytree(
+                    copy.simple_copy_tree(
                         path,
                         repo["dest"],
                         ignore=ignore_patterns(".git"),
