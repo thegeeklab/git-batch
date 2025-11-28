@@ -126,5 +126,5 @@ indent-style = "space"
 line-ending = "lf"
 
 [tool.mypy]
-strict_optional = false
+strict = true
 files = ["gitbatch/"]

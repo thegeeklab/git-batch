@@ -22,19 +22,19 @@ else:
     IO_REPARSE_TAG_MOUNT_POINT = None
 
 
-def _islink(fn: os.DirEntry | str) -> bool:
+def _islink(fn: os.PathLike[str] | str) -> bool:
     return fn.is_symlink() if isinstance(fn, os.DirEntry) else os.path.islink(fn)
 
 
 def _copytree(
-    entries: list[os.DirEntry],
-    src: str,
-    dst: str,
+    entries: list[os.DirEntry[str]],
+    src: os.PathLike[str] | str,
+    dst: os.PathLike[str] | str,
     symlinks: bool,
     ignore: Callable[[str, list[str]], set[str]] | None,
     ignore_dangling_symlinks: bool,
     dirs_exist_ok: bool = False,
-) -> str:
+) -> os.PathLike[str] | str:
     ignored_names = ignore(os.fspath(src), [x.name for x in entries]) if ignore is not None else ()
 
     os.makedirs(dst, exist_ok=dirs_exist_ok)
@@ -108,13 +108,13 @@ def _copytree(
 
 
 def simple_copy_tree(
-    src: str,
-    dst: str,
+    src: os.PathLike[str] | str,
+    dst: os.PathLike[str] | str,
     symlinks: bool = False,
     ignore: Callable[[str, list[str]], set[str]] | None = None,
     ignore_dangling_symlinks: bool = False,
     dirs_exist_ok: bool = False,
-) -> str:
+) -> os.PathLike[str] | str:
     with os.scandir(src) as itr:
         entries = list(itr)
     return _copytree(
@@ -128,7 +128,9 @@ def simple_copy_tree(
     )
 
 
-def simple_copy_stat(src: os.DirEntry | str, dst: str, *, follow_symlinks: bool = True) -> None:
+def simple_copy_stat(
+    src: os.PathLike[str] | str, dst: os.PathLike[str] | str, *, follow_symlinks: bool = True
+) -> None:
     def _nop(
         *args: Any, ns: tuple[int, int] | None = None, follow_symlinks: bool | None = None
     ) -> None:
@@ -138,12 +140,12 @@ def simple_copy_stat(src: os.DirEntry | str, dst: str, *, follow_symlinks: bool 
     follow = follow_symlinks or not (_islink(src) and os.path.islink(dst))
     if follow:
         # use the real function if it exists
-        def lookup(name: str) -> Callable:
+        def lookup(name: str) -> Callable[..., Any]:
             return getattr(os, name, _nop)
     else:
         # use the real function only if it exists
         # *and* it supports follow_symlinks
-        def lookup(name: str) -> Callable:
+        def lookup(name: str) -> Callable[..., Any]:
             fn = getattr(os, name, _nop)
             if hasattr(os, "supports_follow_symlinks") and fn in os.supports_follow_symlinks:
                 return fn
