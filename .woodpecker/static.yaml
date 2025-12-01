@@ -14,6 +14,7 @@ steps:
 
   - name: spellcheck
     image: ghcr.io/streetsidesoftware/cspell
+    depends_on: []
     commands:
       - cspell-cli lint . --gitignore --color
 
