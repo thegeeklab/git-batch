@@ -613,18 +613,15 @@ dev = ["pre-commit", "pytest-asyncio", "tox"]
 
 [[package]]
 name = "python-json-logger"
-version = "4.1.0"
+version = "4.2.0"
 description = "JSON Log Formatter for the Python Logging Package"
 optional = false
 python-versions = ">=3.10"
 groups = ["main"]
 files = [
-    {file = "python_json_logger-4.1.0-py3-none-any.whl", hash = "sha256:132994765cf75bf44554be9aa49b06ef2345d23661a96720262716438141b6b2"},
-    {file = "python_json_logger-4.1.0.tar.gz", hash = "sha256:b396b9e3ed782b09ff9d6e4f1683d46c83ad0d35d2e407c09a9ebbf038f88195"},
+    {file = "python_json_logger-4.2.0-py3-none-any.whl", hash = "sha256:158a52126fcd6869e09574d2b66272666f3dc8f468c62637ef9a1fa883719cb9"},
+    {file = "python_json_logger-4.2.0.tar.gz", hash = "sha256:e371ebe22ec01e289850102091a2b1f6fc9e655c7f1f5f29073936756c290afa"},
 ]
-
-[package.extras]
-dev = ["black", "build", "freezegun", "mdx_truly_sane_lists", "mike", "mkdocs", "mkdocs-awesome-pages-plugin", "mkdocs-gen-files", "mkdocs-literate-nav", "mkdocs-material (>=8.5)", "mkdocstrings[python]", "msgspec ; implementation_name != \"pypy\"", "mypy", "orjson ; implementation_name != \"pypy\"", "pylint", "pytest", "tzdata", "validate-pyproject[all]"]
 
 [[package]]
 name = "ruff"
@@ -705,4 +702,4 @@ files = [
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.11.0"
-content-hash = "a883923a2f2013a8d3cfe12c9965919091f317f843642bc276da9fe5cd14572a"
+content-hash = "ebeaf331ab0d1a9520ad63e4369eec4acfa7c6d67054997392782127210780ac"
